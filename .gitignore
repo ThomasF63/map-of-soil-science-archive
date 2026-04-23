@@ -1,0 +1,9 @@
+# Private brainstorm source — keep out of the public repo
+Gmail - Carte de la pédologie.pdf
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/

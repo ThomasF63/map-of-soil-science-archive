@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Carte de la science des sols — The Map of Soil Science (v1)</title>
+<style>
+  :root {
+    --bg: #f6efe1;            /* parchment */
+    --ink: #2a211a;           /* dark brown ink */
+    --muted: #6b5a48;
+    --accent: #7a3b12;
+
+    /* soil-horizon inspired zone palette */
+    --c-pedo:    #6b4a2e;     /* A horizon — rich brown */
+    --c-proc:    #8c5a33;     /* B horizon — reddish brown */
+    --c-eco:     #708a4e;     /* vegetation green */
+    --c-mgmt:    #b48a3f;     /* ochre / clay */
+    --c-env:     #4a6b5a;     /* wet dark green */
+    --c-soc:     #7a5a8c;     /* purple for "humanities" edge */
+
+    --card-bg: #fffaf0;
+    --shadow: 0 1px 3px rgba(0,0,0,.08), 0 6px 20px rgba(60,40,20,.08);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink);
+               font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+
+  header.topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 28px; border-bottom: 1px solid rgba(0,0,0,.08);
+    background: linear-gradient(180deg, #fbf4e4, #f6efe1);
+    position: sticky; top: 0; z-index: 50;
+  }
+  header .titleblock h1 { margin: 0; font-size: 18px; font-family: "Georgia", serif; letter-spacing: .2px; }
+  header .titleblock .sub { font-size: 12px; color: var(--muted); }
+  .controls { display: flex; gap: 10px; align-items: center; font-size: 13px; }
+  .controls button {
+    background: var(--card-bg); color: var(--ink);
+    border: 1px solid rgba(0,0,0,.15); border-radius: 999px;
+    padding: 6px 12px; font-size: 12px; cursor: pointer;
+    transition: all .15s ease;
+  }
+  .controls button:hover { background: #fff; box-shadow: var(--shadow); }
+  .controls button.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .controls .sep { width: 1px; height: 20px; background: rgba(0,0,0,.15); }
+
+  /* 16:9 stage */
+  .stage-wrap {
+    padding: 18px 28px 28px;
+    display: flex; justify-content: center;
+  }
+  .stage {
+    position: relative;
+    width: 100%;
+    max-width: 1600px;
+    aspect-ratio: 16 / 9;
+    background: var(--bg);
+    border-radius: 14px;
+    border: 1px solid rgba(0,0,0,.06);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  /* subtle paper grain */
+  .stage::before {
+    content: "";
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(rgba(120,85,50,.05) 1px, transparent 1px),
+      radial-gradient(rgba(120,85,50,.03) 1px, transparent 1px);
+    background-size: 22px 22px, 13px 13px;
+    background-position: 0 0, 6px 6px;
+    pointer-events: none;
+  }
+
+  /* Zone container - absolute positioned territories */
+  .zone {
+    position: absolute;
+    border-radius: 22px;
+    padding: 14px 16px;
+    display: flex; flex-direction: column;
+    gap: 10px;
+    background: rgba(255,255,255,.6);
+    border: 2px solid var(--zone-color, #888);
+    box-shadow: inset 0 0 0 4px rgba(255,255,255,.35), 0 2px 8px rgba(0,0,0,.04);
+    transition: box-shadow .2s ease;
+  }
+  .zone:hover { box-shadow: inset 0 0 0 4px rgba(255,255,255,.35), 0 6px 20px rgba(0,0,0,.08); }
+  .zone h2 {
+    margin: 0; padding: 0;
+    font-family: "Georgia", serif;
+    font-size: 14px; line-height: 1.15;
+    color: var(--zone-color);
+    text-transform: uppercase; letter-spacing: .8px;
+  }
+  .zone h2 .en { display: block; font-size: 11px; font-weight: 400;
+                 color: var(--muted); text-transform: none; letter-spacing: .2px; font-style: italic; }
+
+  .nodes { display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; flex: 1; }
+
+  .node {
+    background: var(--card-bg);
+    border: 1px solid rgba(0,0,0,.12);
+    border-radius: 10px;
+    padding: 5px 9px;
+    font-size: 11.5px; line-height: 1.2;
+    cursor: pointer;
+    transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+    white-space: nowrap;
+    display: inline-flex; align-items: baseline; gap: 6px;
+    position: relative;
+    z-index: 2;
+  }
+  .node:hover { transform: translateY(-1px); box-shadow: var(--shadow); background: #fff; }
+  .node .en { font-size: 10px; color: var(--muted); font-style: italic; }
+  .node.dim { opacity: .35; }
+  .node.highlight {
+    background: #fff; border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(122,59,18,.15);
+  }
+
+  /* language mode */
+  body.lang-fr .node .en, body.lang-fr .zone h2 .en { display: none; }
+  body.lang-en .node .fr, body.lang-en .zone h2 .fr { display: none; }
+  body.lang-en .node .en, body.lang-en .zone h2 .en {
+    color: var(--ink); font-style: normal; font-size: 11.5px;
+  }
+  body.lang-en .zone h2 .en { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: var(--zone-color); }
+
+  /* SVG link layer */
+  svg.links {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+  svg.links path { fill: none; stroke: var(--accent); stroke-width: 1.2;
+                   stroke-dasharray: 4 3; opacity: 0; transition: opacity .2s ease; }
+  body.show-links svg.links path { opacity: .35; }
+
+  /* side panel */
+  .panel {
+    position: fixed; top: 0; right: 0; height: 100%;
+    width: min(420px, 92vw);
+    background: #fffaf0;
+    border-left: 1px solid rgba(0,0,0,.12);
+    box-shadow: -12px 0 30px rgba(0,0,0,.12);
+    transform: translateX(100%); transition: transform .25s ease;
+    z-index: 100; padding: 22px 24px; overflow: auto;
+  }
+  .panel.open { transform: translateX(0); }
+  .panel .close { position: absolute; top: 12px; right: 14px;
+                  background: none; border: none; font-size: 22px;
+                  color: var(--muted); cursor: pointer; }
+  .panel h3 { margin: 0 0 2px; font-family: Georgia, serif; font-size: 22px; color: var(--ink); }
+  .panel .en-title { margin: 0 0 12px; font-size: 14px; color: var(--muted); font-style: italic; }
+  .panel .chip { display: inline-block; font-size: 11px; padding: 3px 8px; border-radius: 999px;
+                 background: rgba(0,0,0,.06); color: var(--muted); margin-bottom: 14px; }
+  .panel p { line-height: 1.5; font-size: 14px; color: #3a2e22; }
+  .panel .pair { display: grid; grid-template-columns: 1fr; gap: 14px; }
+  .panel .lang-block { padding: 12px 14px; background: #fff; border: 1px solid rgba(0,0,0,.08);
+                       border-radius: 10px; }
+  .panel .lang-block .flag { font-size: 10px; color: var(--muted); text-transform: uppercase;
+                             letter-spacing: .8px; margin-bottom: 6px; }
+  .panel .neighbors { margin-top: 14px; font-size: 13px; }
+  .panel .neighbors .hdr { font-size: 10px; color: var(--muted); text-transform: uppercase;
+                            letter-spacing: .8px; margin-bottom: 6px; }
+  .panel .neighbors a { display: inline-block; margin: 3px 4px 3px 0;
+                        padding: 3px 8px; background: #f3ebd7; border-radius: 999px;
+                        color: var(--ink); text-decoration: none; font-size: 12px; cursor: pointer; }
+  .panel .neighbors a:hover { background: #e9ddbe; }
+
+  footer.footer {
+    padding: 10px 28px 28px; color: var(--muted); font-size: 11px; text-align: center;
+  }
+  footer a { color: var(--accent); }
+
+  /* responsive reassurance — below ~900px the layout compresses */
+  @media (max-width: 900px) {
+    .zone h2 { font-size: 12px; }
+    .node { font-size: 10.5px; padding: 4px 7px; }
+  }
+</style>
+</head>
+<body class="lang-fr">
+
+<header class="topbar">
+  <div class="titleblock">
+    <h1>Carte de la science des sols — <span style="color:var(--muted);font-weight:400">The Map of Soil Science</span></h1>
+    <div class="sub">Domaines, disciplines &amp; interfaces · Domains, disciplines &amp; interfaces · <em>draft v1</em></div>
+  </div>
+  <div class="controls">
+    <span style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px">Langue</span>
+    <button id="btn-fr" class="active" onclick="setLang('fr')">FR</button>
+    <button id="btn-en" onclick="setLang('en')">EN</button>
+    <button id="btn-both" onclick="setLang('both')">FR+EN</button>
+    <span class="sep"></span>
+    <button id="btn-links" onclick="toggleLinks()">Afficher les liens · Show links</button>
+  </div>
+</header>
+
+<div class="stage-wrap">
+  <div class="stage" id="stage">
+    <svg class="links" id="links" viewBox="0 0 1600 900" preserveAspectRatio="none"></svg>
+    <!-- zones are injected by JS -->
+  </div>
+</div>
+
+<aside class="panel" id="panel">
+  <button class="close" onclick="closePanel()">×</button>
+  <div class="chip" id="panel-zone"></div>
+  <h3 id="panel-title-fr"></h3>
+  <p class="en-title" id="panel-title-en"></p>
+  <div class="pair">
+    <div class="lang-block">
+      <div class="flag">Français</div>
+      <p id="panel-def-fr"></p>
+    </div>
+    <div class="lang-block">
+      <div class="flag">English</div>
+      <p id="panel-def-en"></p>
+    </div>
+  </div>
+  <div class="neighbors">
+    <div class="hdr">Disciplines proches · Related</div>
+    <div id="panel-neighbors"></div>
+  </div>
+</aside>
+
+<footer class="footer">
+  Draft v1 · Inspiré de <em>Domain of Science</em> (Dominic Walliman) et du brainstorm AFES (Feb 2023, avec F. Feder &amp; P. Billet — complété par C. Ducommun, 2024). ·
+  N'hésitez pas à me proposer des modifications, ajouts ou découpages.
+</footer>
+
+<script>
+/* -----------------------------------------------------------------------------
+   DATA: zones, nodes, neighbors
+   Layout coords are normalized (0..1) over a 1600x900 canvas.
+   ---------------------------------------------------------------------------*/
+const ZONES = [
+  {
+    id: "pedo",
+    color: "var(--c-pedo)",
+    fr: "Pédogenèse &amp; Cartographie",
+    en: "Pedology — Genesis &amp; Mapping",
+    tagline: "L'étude du sol comme corps naturel : sa formation, sa description et sa cartographie.",
+    bbox: [0.02, 0.05, 0.33, 0.45]   // x, y, w, h
+  },
+  {
+    id: "proc",
+    color: "var(--c-proc)",
+    fr: "Processus du sol",
+    en: "Soil Processes",
+    tagline: "Les sciences fondamentales qui décrivent le fonctionnement du sol.",
+    bbox: [0.36, 0.05, 0.40, 0.62]
+  },
+  {
+    id: "eco",
+    color: "var(--c-eco)",
+    fr: "Sols &amp; écosystèmes",
+    en: "Soil Ecosystems",
+    tagline: "Les sols déclinés par milieu et par usage.",
+    bbox: [0.78, 0.05, 0.20, 0.36]
+  },
+  {
+    id: "mgmt",
+    color: "var(--c-mgmt)",
+    fr: "Gestion &amp; ingénierie",
+    en: "Management &amp; Engineering",
+    tagline: "Mesurer, modéliser, travailler, fertiliser, bâtir sur les sols.",
+    bbox: [0.78, 0.43, 0.20, 0.45]
+  },
+  {
+    id: "env",
+    color: "var(--c-env)",
+    fr: "Environnement &amp; santé des sols",
+    en: "Environment &amp; Soil Health",
+    tagline: "Dégradations, restaurations, qualité et santé des sols.",
+    bbox: [0.02, 0.48, 0.33, 0.40]
+  },
+  {
+    id: "soc",
+    color: "var(--c-soc)",
+    fr: "Sols &amp; société",
+    en: "Soils &amp; Society",
+    tagline: "Interfaces avec le droit, l'histoire, l'éducation… et l'espace.",
+    bbox: [0.36, 0.69, 0.40, 0.19]
+  }
+];
+
+const NODES = [
+  // PEDOLOGY
+  { id:"pedogenesis",     zone:"pedo",
+    fr:"Formation des sols", en:"Pedogenesis",
+    defFr:"Étude des processus — altération, transport, accumulation — qui engendrent un sol à partir de sa roche-mère, sous l'action du climat, des organismes, du relief et du temps.",
+    defEn:"Study of the processes — weathering, transport, accumulation — that form a soil from its parent material under the influence of climate, organisms, relief and time.",
+    neighbors:["classification","morphology","mineralogy","archaeology","extraterrestrial"] },
+  { id:"classification",  zone:"pedo",
+    fr:"Classification des sols", en:"Soil classification",
+    defFr:"Systèmes de classification (WRB, Soil Taxonomy, Référentiel pédologique) qui ordonnent les sols selon leurs horizons, propriétés et genèse.",
+    defEn:"Systems (WRB, Soil Taxonomy, Référentiel pédologique) that organise soils by horizons, properties and genesis.",
+    neighbors:["pedogenesis","morphology","survey","mapping"] },
+  { id:"morphology",      zone:"pedo",
+    fr:"Morphologie du sol", en:"Soil morphology",
+    defFr:"Description visuelle et tactile du sol sur le terrain : horizons, couleur (Munsell), structure, texture, porosité.",
+    defEn:"Field-based description of the soil: horizons, colour (Munsell), structure, texture, porosity.",
+    neighbors:["classification","pedogenesis","survey"] },
+  { id:"survey",          zone:"pedo",
+    fr:"Étude des sols", en:"Soil survey",
+    defFr:"Prospection systématique sur le terrain : fosses, sondages, prélèvements, descriptions — base de toute connaissance territoriale du sol.",
+    defEn:"Systematic field prospection — pits, augers, sampling, descriptions — the backbone of territorial soil knowledge.",
+    neighbors:["classification","morphology","mapping","remote-sensing"] },
+  { id:"mapping",         zone:"pedo",
+    fr:"Cartographie des sols", en:"Soil mapping / DSM",
+    defFr:"Des cartes analogiques aux cartes numériques (<em>Digital Soil Mapping</em>) : représentation spatiale des sols et de leurs propriétés.",
+    defEn:"From analogue maps to Digital Soil Mapping (DSM): spatial representation of soils and soil properties.",
+    neighbors:["survey","remote-sensing","classification","modeling"] },
+  { id:"remote-sensing",  zone:"pedo",
+    fr:"Télédétection", en:"Remote sensing",
+    defFr:"Observation des sols par satellites, drones, géophysique : humidité, matière organique, salinité, occupation du sol.",
+    defEn:"Observation of soils by satellites, drones and geophysics: moisture, organic matter, salinity, land cover.",
+    neighbors:["mapping","survey","modeling"] },
+
+  // PROCESSES
+  { id:"physics",          zone:"proc",
+    fr:"Physique du sol", en:"Soil physics",
+    defFr:"Propriétés physiques (densité, porosité, agrégation), mouvements d'eau, d'air et de chaleur dans le sol.",
+    defEn:"Physical properties (bulk density, porosity, aggregation), movement of water, air and heat in soil.",
+    neighbors:["hydrology","tillage","modeling","physicochem"] },
+  { id:"chemistry",        zone:"proc",
+    fr:"Chimie du sol", en:"Soil chemistry",
+    defFr:"Composition chimique, réactions, pH, CEC, spéciation des éléments majeurs et traces.",
+    defEn:"Chemical composition, reactions, pH, CEC, major- and trace-element speciation.",
+    neighbors:["physicochem","mineralogy","biogeochem","fertility"] },
+  { id:"physicochem",      zone:"proc",
+    fr:"Physico-chimie", en:"Soil physico-chemistry",
+    defFr:"Interfaces entre la chimie et la physique : adsorption, charge de surface, échange ionique, colloïdes.",
+    defEn:"Interfaces between chemistry and physics: adsorption, surface charge, ion exchange, colloids.",
+    neighbors:["chemistry","physics","clay","mineralogy"] },
+  { id:"mineralogy",       zone:"proc",
+    fr:"Minéralogie", en:"Soil mineralogy",
+    defFr:"Identification et rôle des minéraux primaires et secondaires (argiles, oxydes, carbonates).",
+    defEn:"Identification and role of primary and secondary minerals (clays, oxides, carbonates).",
+    neighbors:["clay","chemistry","pedogenesis","forensics"] },
+  { id:"clay",             zone:"proc",
+    fr:"Science des argiles", en:"Clay science",
+    defFr:"Étude des phyllosilicates : structure, réactivité, gonflement, interactions organo-minérales.",
+    defEn:"Phyllosilicates: structure, reactivity, swelling, organo-mineral interactions.",
+    neighbors:["mineralogy","physicochem","som"] },
+  { id:"som",              zone:"proc",
+    fr:"Matières organiques", en:"Soil organic matter",
+    defFr:"Origine, composition et dynamique des matières organiques (MOS) — clef de la fertilité et du cycle du carbone.",
+    defEn:"Origin, composition and dynamics of soil organic matter (SOM) — key to fertility and the carbon cycle.",
+    neighbors:["biogeochem","biochemistry","microbio","health","fertility"] },
+  { id:"biochemistry",     zone:"proc",
+    fr:"Biochimie du sol", en:"Soil biochemistry",
+    defFr:"Réactions biochimiques : enzymes, métabolites, transformations de la MO médiées par les organismes.",
+    defEn:"Biochemical reactions: enzymes, metabolites, organism-mediated transformations of SOM.",
+    neighbors:["microbio","som","biology","biogeochem"] },
+  { id:"biology",          zone:"proc",
+    fr:"Biologie du sol", en:"Soil biology",
+    defFr:"Faune (vers, arthropodes, nématodes) et fonctions biologiques associées.",
+    defEn:"Soil fauna (earthworms, arthropods, nematodes) and their biological functions.",
+    neighbors:["microbio","ecology","biochemistry","health"] },
+  { id:"microbio",         zone:"proc",
+    fr:"Microbiologie", en:"Soil microbiology",
+    defFr:"Bactéries, archées, champignons : diversité, fonctions, communautés et interactions.",
+    defEn:"Bacteria, archaea, fungi: diversity, functions, communities and interactions.",
+    neighbors:["biology","biogeochem","biochemistry","som"] },
+  { id:"ecology",          zone:"proc",
+    fr:"Écologie du sol", en:"Soil ecology",
+    defFr:"Réseaux trophiques, biodiversité et interactions écosystémiques dans le sol.",
+    defEn:"Soil food webs, biodiversity and ecosystem-level interactions.",
+    neighbors:["biology","microbio","forest-soils","wetlands"] },
+  { id:"biogeochem",       zone:"proc",
+    fr:"Biogéochimie", en:"Biogeochemistry",
+    defFr:"Cycles couplés du C, N, P, S, métaux… à l'interface entre vivants, minéraux et solutions.",
+    defEn:"Coupled cycles of C, N, P, S, metals… at the interface of biota, minerals and solutions.",
+    neighbors:["chemistry","microbio","som","environment"] },
+  { id:"hydrology",        zone:"proc",
+    fr:"Hydrologie du sol", en:"Soil hydrology",
+    defFr:"Infiltration, rétention, drainage, écoulements préférentiels : le sol comme régulateur de l'eau.",
+    defEn:"Infiltration, retention, drainage, preferential flow: soil as a regulator of water.",
+    neighbors:["physics","wetlands","modeling","environment"] },
+
+  // ECOSYSTEMS
+  { id:"agri-soils",       zone:"eco",
+    fr:"Sols agricoles", en:"Agricultural soils",
+    defFr:"Sols cultivés : enjeux de fertilité, travail du sol, rotations, agro-écologie.",
+    defEn:"Cultivated soils: fertility, tillage, rotations, agro-ecology.",
+    neighbors:["fertility","tillage","edaphology","health"] },
+  { id:"forest-soils",     zone:"eco",
+    fr:"Sols forestiers", en:"Forest soils",
+    defFr:"Sols sous couvert forestier : humus, litières, cycles lents, nutrition des peuplements.",
+    defEn:"Soils under forest: humus forms, litter, slow cycles, stand nutrition.",
+    neighbors:["ecology","som","pedogenesis"] },
+  { id:"urban-soils",      zone:"eco",
+    fr:"Sols urbains &amp; artificialisés", en:"Urban &amp; anthropogenic soils",
+    defFr:"SUITMA : sols urbains, industriels, de transport, miniers — souvent fabriqués par l'homme.",
+    defEn:"SUITMA: Soils of Urban, Industrial, Traffic, Mining and Military Areas — often man-made.",
+    neighbors:["geotech","degradation","environment"] },
+  { id:"wetlands",         zone:"eco",
+    fr:"Zones humides", en:"Wetland soils",
+    defFr:"Sols hydromorphes et tourbeux : anaérobie, gley, pseudogley, stockage de carbone.",
+    defEn:"Hydromorphic and peat soils: anaerobic processes, gley, pseudogley, carbon storage.",
+    neighbors:["hydrology","som","environment","ecology"] },
+  { id:"salinity",         zone:"eco",
+    fr:"Salinité des sols", en:"Soil salinity",
+    defFr:"Accumulation de sels, sodicité, irrigation : un facteur majeur de dégradation mondiale.",
+    defEn:"Salt accumulation, sodicity, irrigation: a major global degradation factor.",
+    neighbors:["degradation","chemistry","remote-sensing","agri-soils"] },
+  { id:"edaphology",       zone:"eco",
+    fr:"Édaphologie", en:"Edaphology",
+    defFr:"Le sol vu comme milieu de vie des plantes — longtemps opposé à la pédologie <em>sensu stricto</em>.",
+    defEn:"Soil as a plant-growth medium — historically contrasted with pedology <em>sensu stricto</em>.",
+    neighbors:["agri-soils","fertility","biology"] },
+
+  // MANAGEMENT & ENGINEERING
+  { id:"fertility",        zone:"mgmt",
+    fr:"Fertilité &amp; fertilisation", en:"Fertility &amp; fertilization",
+    defFr:"Diagnostic nutritif, amendements, fertilisants, restitutions organiques.",
+    defEn:"Nutrient diagnostics, amendments, fertilizers, organic returns.",
+    neighbors:["chemistry","som","agri-soils","edaphology"] },
+  { id:"tillage",          zone:"mgmt",
+    fr:"Travail du sol &amp; mécanique", en:"Tillage &amp; soil mechanics",
+    defFr:"Mécanique des sols, compaction, outils, agriculture de conservation.",
+    defEn:"Soil mechanics, compaction, implements, conservation agriculture.",
+    neighbors:["physics","geotech","degradation","agri-soils"] },
+  { id:"metrology",        zone:"mgmt",
+    fr:"Métrologie &amp; analyses", en:"Soil analytics &amp; metrology",
+    defFr:"Méthodes de mesure, laboratoires, protocoles, incertitudes, capteurs in-situ.",
+    defEn:"Measurement methods, laboratories, protocols, uncertainties, in-situ sensors.",
+    neighbors:["chemistry","physics","remote-sensing","modeling"] },
+  { id:"modeling",         zone:"mgmt",
+    fr:"Modélisation", en:"Process modeling",
+    defFr:"Modèles mécanistes ou statistiques des processus du sol et couplages biogéochimiques.",
+    defEn:"Mechanistic or statistical models of soil processes and biogeochemical couplings.",
+    neighbors:["hydrology","biogeochem","mapping","metrology"] },
+  { id:"geotech",          zone:"mgmt",
+    fr:"Génie civil &amp; géotechnique", en:"Civil engineering &amp; geotechnics",
+    defFr:"Mécanique des sols au sens ingénieur : fondations, terrassements, stabilité.",
+    defEn:"Soil mechanics in the engineering sense: foundations, earthworks, stability.",
+    neighbors:["tillage","urban-soils","physics"] },
+
+  // ENVIRONMENT & HEALTH
+  { id:"environment",      zone:"env",
+    fr:"Sols &amp; environnement", en:"Soils &amp; environment",
+    defFr:"Les sols comme composante des cycles globaux : climat, eau, biodiversité, pollutions diffuses.",
+    defEn:"Soils within global cycles: climate, water, biodiversity, diffuse pollution.",
+    neighbors:["biogeochem","hydrology","wetlands","degradation"] },
+  { id:"degradation",      zone:"env",
+    fr:"Dégradation des sols", en:"Soil degradation",
+    defFr:"Érosion, tassement, pertes de MO, contamination, artificialisation, désertification.",
+    defEn:"Erosion, compaction, SOM losses, contamination, soil sealing, desertification.",
+    neighbors:["conservation","salinity","urban-soils","environment"] },
+  { id:"conservation",     zone:"env",
+    fr:"Conservation &amp; restauration", en:"Conservation &amp; restoration",
+    defFr:"Pratiques, politiques et techniques de protection, de restauration et de réhabilitation.",
+    defEn:"Practices, policies and techniques for protection, restoration and rehabilitation.",
+    neighbors:["degradation","health","law","agri-soils"] },
+  { id:"health",           zone:"env",
+    fr:"Santé des sols", en:"Soil health",
+    defFr:"Capacité d'un sol à fonctionner durablement : indicateurs biologiques, physiques, chimiques.",
+    defEn:"A soil's sustained capacity to function: biological, physical and chemical indicators.",
+    neighbors:["som","biology","microbio","conservation","agri-soils"] },
+
+  // SOCIETY
+  { id:"law",              zone:"soc",
+    fr:"Sols &amp; droit", en:"Soils &amp; law",
+    defFr:"Droit des sols, statut juridique, politiques publiques, directives européennes.",
+    defEn:"Soil law, legal status, public policy, European directives.",
+    neighbors:["conservation","environment","education"] },
+  { id:"archaeology",      zone:"soc",
+    fr:"Sols &amp; archéologie", en:"Soils &amp; archaeology",
+    defFr:"Paléosols, anthroposols, géoarchéologie : le sol comme archive.",
+    defEn:"Paleosols, anthrosols, geoarchaeology: soil as archive.",
+    neighbors:["pedogenesis","morphology","forensics"] },
+  { id:"education",        zone:"soc",
+    fr:"Sols &amp; éducation", en:"Soils &amp; education",
+    defFr:"Pédagogie, vulgarisation, médiation scientifique et citoyenneté des sols.",
+    defEn:"Pedagogy, outreach, science communication and soil citizenship.",
+    neighbors:["law","health"] },
+  { id:"forensics",        zone:"soc",
+    fr:"Criminalistique des sols", en:"Soil forensics",
+    defFr:"Identification et traçabilité d'échantillons de sol dans les enquêtes criminelles.",
+    defEn:"Identification and tracing of soil samples in criminal investigations.",
+    neighbors:["mineralogy","archaeology"] },
+  { id:"extraterrestrial", zone:"soc",
+    fr:"Pédologie extra-terrestre", en:"Extraterrestrial pedology",
+    defFr:"Régolithes lunaires et martiens — à quel point peut-on parler de « sol » ? 🌕 🪐",
+    defEn:"Lunar and Martian regoliths — at what point do we actually have a \"soil\"? 🌕 🪐",
+    neighbors:["mineralogy","pedogenesis"] }
+];
+
+/* -----------------------------------------------------------------------------
+   RENDER
+   ---------------------------------------------------------------------------*/
+const stage = document.getElementById('stage');
+const linksSvg = document.getElementById('links');
+
+function render() {
+  // Build zones
+  ZONES.forEach(z => {
+    const el = document.createElement('section');
+    el.className = 'zone';
+    el.dataset.id = z.id;
+    el.style.setProperty('--zone-color', z.color);
+    const [x,y,w,h] = z.bbox;
+    el.style.left = (x*100)+'%';
+    el.style.top = (y*100)+'%';
+    el.style.width = (w*100)+'%';
+    el.style.height = (h*100)+'%';
+    el.innerHTML = `
+      <h2><span class="fr">${z.fr}</span><span class="en">${z.en}</span></h2>
+      <div class="nodes" data-zone="${z.id}"></div>
+    `;
+    stage.appendChild(el);
+  });
+
+  // Build nodes
+  NODES.forEach(n => {
+    const host = stage.querySelector(`.nodes[data-zone="${n.zone}"]`);
+    if (!host) return;
+    const el = document.createElement('button');
+    el.className = 'node';
+    el.dataset.id = n.id;
+    el.innerHTML = `<span class="fr">${n.fr}</span><span class="en">${n.en}</span>`;
+    el.addEventListener('click', () => openNode(n.id));
+    host.appendChild(el);
+  });
+
+  // Build proximity links (drawn in SVG viewBox 1600x900)
+  drawLinks();
+  window.addEventListener('resize', drawLinks);
+}
+
+function nodeCenter(nodeId) {
+  const el = stage.querySelector(`.node[data-id="${nodeId}"]`);
+  if (!el) return null;
+  const r = el.getBoundingClientRect();
+  const s = stage.getBoundingClientRect();
+  const cx = (r.left - s.left + r.width/2) / s.width * 1600;
+  const cy = (r.top  - s.top  + r.height/2) / s.height * 900;
+  return {cx, cy};
+}
+
+function drawLinks() {
+  linksSvg.innerHTML = '';
+  const drawn = new Set();
+  NODES.forEach(n => {
+    (n.neighbors||[]).forEach(m => {
+      const key = [n.id,m].sort().join('|');
+      if (drawn.has(key)) return;
+      drawn.add(key);
+      const a = nodeCenter(n.id), b = nodeCenter(m);
+      if (!a || !b) return;
+      // Only draw cross-zone links (reduce clutter)
+      const an = NODES.find(x=>x.id===n.id), bn = NODES.find(x=>x.id===m);
+      if (!an || !bn) return;
+      if (an.zone === bn.zone) return;
+      const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+      const mx = (a.cx+b.cx)/2;
+      const my = (a.cy+b.cy)/2 - Math.min(80, Math.abs(a.cx-b.cx)/6);
+      path.setAttribute('d', `M ${a.cx} ${a.cy} Q ${mx} ${my} ${b.cx} ${b.cy}`);
+      path.dataset.a = n.id;
+      path.dataset.b = m;
+      linksSvg.appendChild(path);
+    });
+  });
+}
+
+/* -----------------------------------------------------------------------------
+   INTERACTIONS
+   ---------------------------------------------------------------------------*/
+function setLang(l) {
+  document.body.classList.remove('lang-fr','lang-en','lang-both');
+  document.body.classList.add('lang-'+l);
+  ['fr','en','both'].forEach(k => {
+    document.getElementById('btn-'+k).classList.toggle('active', k===l);
+  });
+  // relayout links since content size changed
+  requestAnimationFrame(drawLinks);
+}
+
+function toggleLinks() {
+  document.body.classList.toggle('show-links');
+  document.getElementById('btn-links').classList.toggle('active', document.body.classList.contains('show-links'));
+}
+
+function openNode(id) {
+  const n = NODES.find(x => x.id === id);
+  if (!n) return;
+  const z = ZONES.find(x => x.id === n.zone);
+
+  document.getElementById('panel-zone').innerHTML =
+    `${z.fr.replace(/&amp;/g,'&')} · ${z.en.replace(/&amp;/g,'&')}`;
+  document.getElementById('panel-title-fr').innerHTML = n.fr;
+  document.getElementById('panel-title-en').innerHTML = n.en;
+  document.getElementById('panel-def-fr').innerHTML = n.defFr;
+  document.getElementById('panel-def-en').innerHTML = n.defEn;
+
+  const neighborsWrap = document.getElementById('panel-neighbors');
+  neighborsWrap.innerHTML = '';
+  (n.neighbors||[]).forEach(m => {
+    const nn = NODES.find(x => x.id === m);
+    if (!nn) return;
+    const a = document.createElement('a');
+    a.textContent = `${nn.fr} · ${nn.en}`.replace(/<[^>]+>/g,'');
+    a.addEventListener('click', (e) => { e.preventDefault(); openNode(m); });
+    neighborsWrap.appendChild(a);
+  });
+
+  document.querySelectorAll('.node').forEach(el => {
+    el.classList.toggle('highlight', el.dataset.id === id);
+    el.classList.toggle('dim', el.dataset.id !== id && !(n.neighbors||[]).includes(el.dataset.id));
+  });
+  document.getElementById('panel').classList.add('open');
+}
+
+function closePanel() {
+  document.getElementById('panel').classList.remove('open');
+  document.querySelectorAll('.node').forEach(el => {
+    el.classList.remove('highlight','dim');
+  });
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closePanel();
+});
+
+render();
+</script>
+</body>
+</html>
