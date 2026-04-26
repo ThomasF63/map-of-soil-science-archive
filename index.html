@@ -3,980 +3,709 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Carte de la science des sols — The Map of Soil Science (v2)</title>
+<title>La carte de la science des sols</title>
+<link rel="stylesheet" href="colors_and_type.css"/>
+<link rel="stylesheet" href="map-shared.css"/>
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css"/>
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css"/>
 <style>
-  :root {
-    --bg: #f6efe1;
-    --ink: #2a211a;
-    --muted: #6b5a48;
-    --accent: #7a3b12;
-    --card-bg: #fffaf0;
-    --shadow: 0 1px 3px rgba(0,0,0,.08), 0 6px 20px rgba(60,40,20,.08);
+/* ═══════════════════════════════════════════════════════════════════════
+   THE FIELD ATLAS — single-language, no-bridges edition
+   A typographic plate of soil science. Ten domains framed by four
+   reading axes (Origins · Context · Fundamental · Applied). Click any
+   discipline for its definition and related fields. French or English.
+   ═══════════════════════════════════════════════════════════════════════ */
 
-    /* 10-zone palette — progression from deep-soil browns (top) to living greens (mid)
-       to anthropogenic greys (lower) to environment-teal and society-purple (bottom) */
-    --c-z1:  #5a3a22; /* Pédogenèse — deep A-horizon brown */
-    --c-z2:  #8a6a42; /* Morpho / Classification / Cartographie — B-horizon warm brown */
-    --c-z3:  #a16a33; /* Physique — ochre */
-    --c-z4:  #b85c33; /* Chimie & Biogéochimie — oxidised iron red */
-    --c-z5:  #6f8a42; /* Biologie / Microbio / Écologie — olive green */
-    --c-z6:  #3f8a3a; /* Sols & Plantes — leaf green */
-    --c-z7:  #a88a2f; /* Gestion & Usage — wheat / field gold */
-    --c-z8:  #6c6c72; /* Sols anthropogéniques — concrete / urban grey */
-    --c-z9:  #3d7078; /* Environnement & Climat — deep teal / water */
-    --c-z10: #7a5a8c; /* Société & Frontières — purple */
-  }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink);
-               font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+:root {
+  --plate-w: 1760px;
+  --plate-h: 1040px;
+  --frame: 28px;
+}
 
-  header.topbar {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 24px; border-bottom: 1px solid rgba(0,0,0,.08);
-    background: linear-gradient(180deg, #fbf4e4, #f6efe1);
-    position: sticky; top: 0; z-index: 50; gap: 16px; flex-wrap: wrap;
-  }
-  header .titleblock h1 { margin: 0; font-size: 17px; font-family: "Georgia", serif; letter-spacing: .2px; }
-  header .titleblock .sub { font-size: 11px; color: var(--muted); }
-  .controls { display: flex; gap: 8px; align-items: center; font-size: 12px; flex-wrap: wrap; }
-  .controls button {
-    background: var(--card-bg); color: var(--ink);
-    border: 1px solid rgba(0,0,0,.15); border-radius: 999px;
-    padding: 5px 11px; font-size: 11.5px; cursor: pointer;
-    transition: all .15s ease;
-  }
-  .controls button:hover { background: #fff; box-shadow: var(--shadow); }
-  .controls button.active { background: var(--ink); color: #fff; border-color: var(--ink); }
-  .controls .sep { width: 1px; height: 18px; background: rgba(0,0,0,.15); }
-  .controls .label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; }
-  .controls select { font-size: 11.5px; padding: 4px 8px; border-radius: 8px;
-                     border: 1px solid rgba(0,0,0,.15); background: var(--card-bg); color: var(--ink); }
+html, body {
+  background:
+    radial-gradient(1200px 600px at 50% 0%, rgba(90,58,34,.04), transparent),
+    #EEE9DF;
+  color: var(--soil);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+}
+body { margin: 0; }
 
-  .stage-wrap { padding: 14px 20px 18px; display: flex; justify-content: center; }
-  .stage {
-    position: relative; width: 100%; max-width: 1760px;
-    aspect-ratio: 16 / 9;
-    background: var(--bg);
-    border-radius: 12px;
-    border: 1px solid rgba(0,0,0,.06);
-    box-shadow: var(--shadow);
-    overflow: hidden;
-  }
-  .stage::before {
-    content: ""; position: absolute; inset: 0;
-    background-image:
-      radial-gradient(rgba(120,85,50,.05) 1px, transparent 1px),
-      radial-gradient(rgba(120,85,50,.03) 1px, transparent 1px);
-    background-size: 22px 22px, 13px 13px;
-    background-position: 0 0, 6px 6px;
-    pointer-events: none;
-  }
+/* ─── Cover / masthead band ─── */
+.masthead {
+  max-width: 1760px; margin: 0 auto;
+  padding: 28px 32px 6px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 28px;
+  align-items: start;
+}
+.masthead .brandline {
+  font-family: var(--font-mono); font-size: 10.5px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--soil);
+  display: flex; gap: 10px; align-items: center;
+}
+.masthead .brandline .tag { color: var(--soil-60); }
+.masthead .brandline .dot {
+  width: 4px; height: 4px; border-radius: 9999px; background: var(--soil-30);
+}
+.masthead .brandline.right { justify-content: flex-end; text-align: right; }
 
-  .zone {
-    position: absolute; border-radius: 18px;
-    padding: 10px 12px;
-    display: flex; flex-direction: column; gap: 6px;
-    background: rgba(255,255,255,.62);
-    border: 2px solid var(--zone-color, #888);
-    box-shadow: inset 0 0 0 3px rgba(255,255,255,.35), 0 1px 4px rgba(0,0,0,.04);
-    transition: box-shadow .2s ease;
-  }
-  .zone:hover { box-shadow: inset 0 0 0 3px rgba(255,255,255,.35), 0 5px 18px rgba(0,0,0,.08); }
-  .zone h2 {
-    margin: 0; padding: 0;
-    font-family: "Georgia", serif;
-    font-size: 12.5px; line-height: 1.12;
-    color: var(--zone-color);
-    text-transform: uppercase; letter-spacing: .7px;
-  }
-  .zone h2 .en { display: block; font-size: 10px; font-weight: 400;
-                 color: var(--muted); text-transform: none; letter-spacing: .2px; font-style: italic; }
-  .nodes { display: flex; flex-wrap: wrap; gap: 4px; align-content: flex-start; flex: 1; }
+.masthead .title {
+  text-align: center;
+  grid-column: 1 / -1;
+  margin-top: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--soil-15);
+}
+.masthead .title h1 {
+  margin: 0;
+  font-size: clamp(38px, 4.8vw, 58px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 0.98;
+  color: var(--soil);
+  text-wrap: balance;
+}
+.masthead .title .sub {
+  display: block;
+  margin: 16px auto 0;
+  font-size: clamp(14px, 1.2vw, 17px);
+  font-weight: 400;
+  color: var(--soil-60);
+  letter-spacing: -0.005em;
+  line-height: 1.45;
+  max-width: 960px;
+  text-wrap: pretty;
+}
 
-  .node {
-    background: var(--card-bg);
-    border: 1px solid rgba(0,0,0,.12);
-    border-radius: 9px;
-    padding: 3.5px 7px;
-    font-size: 10.5px; line-height: 1.15;
-    cursor: pointer;
-    transition: transform .12s ease, box-shadow .12s ease, background .12s ease, opacity .2s ease;
-    white-space: nowrap;
-    display: inline-flex; align-items: baseline; gap: 5px;
-    position: relative; z-index: 2;
-  }
-  .node:hover { transform: translateY(-1px); box-shadow: var(--shadow); background: #fff; }
-  .node .en { font-size: 9px; color: var(--muted); font-style: italic; }
-  .node.dim { opacity: .25; }
-  .node.highlight {
-    background: #fff; border-color: var(--accent);
-    box-shadow: 0 0 0 2px rgba(122,59,18,.18);
-  }
-  .node.bridge-hit {
-    background: #fff8e6;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px rgba(122,59,18,.22);
-  }
+/* ─── Stats band ─── */
+.stats {
+  max-width: 1760px; margin: 0 auto;
+  padding: 14px 32px 14px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 24px; align-items: center;
+}
+.stats .numbers { display: flex; gap: 36px; }
+.stats .n { display: flex; align-items: baseline; gap: 8px; }
+.stats .n .num {
+  font-family: var(--font-sans);
+  font-size: 30px; font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--soil);
+  line-height: 1;
+}
+.stats .n .lbl {
+  font-family: var(--font-mono); font-size: 10.5px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--soil-60);
+}
+.stats .blurb {
+  text-align: center;
+  font-size: 14.5px; color: var(--soil-60);
+  line-height: 1.55; max-width: 780px; margin: 0 auto;
+  text-wrap: pretty;
+}
+.stats .blurb em { font-style: italic; color: var(--soil); }
 
-  body.lang-fr .node .en, body.lang-fr .zone h2 .en { display: none; }
-  body.lang-en .node .fr, body.lang-en .zone h2 .fr { display: none; }
-  body.lang-en .zone h2 .en {
-    font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .7px;
-    color: var(--zone-color); font-style: normal;
-  }
-  body.lang-en .node .en {
-    color: var(--ink); font-style: normal; font-size: 10.5px;
-  }
+/* ─── Controls ─── */
+.controls {
+  display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.controls .grp {
+  display: inline-flex; align-items: center;
+  background: var(--white);
+  border: 1px solid var(--soil-15);
+  border-radius: 9999px;
+  padding: 3px;
+}
+.controls .grp .glabel {
+  font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--soil-60);
+  padding: 0 10px 0 12px;
+}
+.controls button.chip {
+  padding: 5px 13px; border-radius: 9999px;
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--soil);
+  transition: background var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out);
+}
+.controls button.chip:hover { background: var(--soil-05); }
+.controls button.chip.active { background: var(--soil); color: var(--root); }
 
-  svg.links {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
-    pointer-events: none; z-index: 1;
-  }
-  svg.links path { fill: none; stroke: var(--accent); stroke-width: 1.1;
-                   stroke-dasharray: 4 3; opacity: 0; transition: opacity .2s ease; }
-  body.show-links svg.links path { opacity: .32; }
-  svg.links path.bridge-line { stroke: var(--accent); stroke-width: 1.6; stroke-dasharray: 6 3; opacity: 0; }
-  body.bridge-active svg.links path.bridge-line { opacity: .75; }
+/* ─── Plate frame ─── */
+.plate-wrap {
+  max-width: 1760px; margin: 0 auto;
+  padding: 10px 32px 0;
+}
+.plate {
+  position: relative;
+  aspect-ratio: 1760 / 1040;
+  background: var(--root);
+  border: 1px solid var(--soil-15);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(59,50,44,.06);
+}
+.plate::before {
+  /* inner hairline frame — printmark feel */
+  content: ""; position: absolute;
+  inset: var(--frame);
+  border: 1px solid var(--soil-10);
+  border-radius: 3px;
+  pointer-events: none;
+  z-index: 1;
+}
+.plate::after {
+  /* corner tick marks */
+  content: "";
+  position: absolute;
+  inset: calc(var(--frame) - 10px);
+  pointer-events: none; z-index: 2;
+  background-image:
+    linear-gradient(to right, var(--soil) 12px, transparent 12px),
+    linear-gradient(to right, var(--soil) 12px, transparent 12px),
+    linear-gradient(to bottom, var(--soil) 12px, transparent 12px),
+    linear-gradient(to bottom, var(--soil) 12px, transparent 12px);
+  background-repeat: no-repeat;
+  background-position:
+    top left, top right,
+    top left, top right;
+  background-size: 12px 1px, 12px 1px, 1px 12px, 1px 12px;
+}
 
-  /* side panel */
-  .panel {
-    position: fixed; top: 0; right: 0; height: 100%;
-    width: min(440px, 94vw);
-    background: #fffaf0;
-    border-left: 1px solid rgba(0,0,0,.12);
-    box-shadow: -12px 0 30px rgba(0,0,0,.12);
-    transform: translateX(100%); transition: transform .25s ease;
-    z-index: 100; padding: 22px 24px; overflow: auto;
-  }
-  .panel.open { transform: translateX(0); }
-  .panel .close { position: absolute; top: 12px; right: 14px;
-                  background: none; border: none; font-size: 22px;
-                  color: var(--muted); cursor: pointer; }
-  .panel h3 { margin: 0 0 2px; font-family: Georgia, serif; font-size: 21px; color: var(--ink); }
-  .panel .en-title { margin: 0 0 12px; font-size: 13px; color: var(--muted); font-style: italic; }
-  .panel .chip { display: inline-block; font-size: 10.5px; padding: 3px 8px; border-radius: 999px;
-                 background: rgba(0,0,0,.06); color: var(--muted); margin-bottom: 12px;
-                 text-transform: uppercase; letter-spacing: .5px; font-weight: 600; }
-  .panel p { line-height: 1.5; font-size: 13.5px; color: #3a2e22; margin: 0 0 8px; }
-  .panel .lang-block { padding: 10px 13px; background: #fff; border: 1px solid rgba(0,0,0,.08);
-                       border-radius: 10px; margin-bottom: 10px; }
-  .panel .lang-block .flag { font-size: 9.5px; color: var(--muted); text-transform: uppercase;
-                             letter-spacing: .7px; margin-bottom: 6px; font-weight: 600; }
-  .panel .section-title { margin: 14px 0 6px; font-size: 10.5px; color: var(--muted);
-                          text-transform: uppercase; letter-spacing: .7px; font-weight: 600; }
-  .panel ul.subs { margin: 0; padding: 0 0 0 16px; font-size: 12.5px; line-height: 1.45; color: #3a2e22; }
-  .panel ul.subs li { margin-bottom: 3px; }
-  .panel ul.subs li em { color: var(--muted); font-style: italic; }
-  .panel .neighbors a { display: inline-block; margin: 3px 4px 3px 0;
-                        padding: 3px 8px; background: #f3ebd7; border-radius: 999px;
-                        color: var(--ink); text-decoration: none; font-size: 11.5px; cursor: pointer; }
-  .panel .neighbors a:hover { background: #e9ddbe; }
+.plate-inner {
+  position: absolute;
+  inset: var(--frame);
+  z-index: 3;
+}
 
-  /* bridge banner */
-  .bridge-banner {
-    position: absolute; left: 14px; right: 14px; top: 14px;
-    background: rgba(255,250,240,.95); border: 1px solid rgba(0,0,0,.1);
-    border-radius: 10px; padding: 8px 12px; font-size: 12px;
-    color: var(--ink); box-shadow: var(--shadow);
-    display: none; z-index: 20;
-  }
-  body.bridge-active .bridge-banner { display: flex; gap: 10px; align-items: center; }
-  .bridge-banner b { color: var(--accent); }
-  .bridge-banner button { margin-left: auto; background: none; border: 1px solid rgba(0,0,0,.15);
-                           padding: 3px 10px; border-radius: 999px; cursor: pointer; font-size: 11px; }
+/* axis labels */
+.axis {
+  position: absolute;
+  font-family: var(--font-mono); font-size: 10.5px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--soil-60);
+  z-index: 4;
+  white-space: nowrap;
+}
+.axis.top    { top: 10px;    left: 50%; transform: translateX(-50%); }
+.axis.bottom { bottom: 10px; left: 50%; transform: translateX(-50%); }
+.axis.left   { left: 14px;   top: 50%;  transform: translate(-50%, -50%) rotate(-90deg); }
+.axis.right  { right: 14px;  top: 50%;  transform: translate(50%, -50%)  rotate(90deg);  }
+.axis b { color: var(--soil); font-weight: 700; letter-spacing: 0.16em; }
 
-  footer.footer {
-    padding: 6px 28px 24px; color: var(--muted); font-size: 11px; text-align: center;
-    line-height: 1.5;
-  }
-  footer a { color: var(--accent); }
+/* ─── Zones ─── */
+.zone {
+  position: absolute;
+  background:
+    linear-gradient(180deg, var(--zt), rgba(247,245,240,.05));
+  padding: 14px 16px 16px;
+  overflow: hidden;
+  z-index: 3;
+  border-top: 2px solid var(--zc);
+  border-right: 1px dashed var(--soil-10);
+  display: flex; flex-direction: column;
+}
+.zone:last-of-type { border-right: 0; }
+.zone .head {
+  display: flex; gap: 10px; align-items: flex-start;
+  margin-bottom: 10px;
+  min-width: 0;
+}
+.zone .medallion {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 30px; height: 30px; padding: 0 9px;
+  border: 1.5px solid var(--zc);
+  border-radius: 9999px;
+  font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--zc);
+  background: var(--root);
+  flex: none;
+}
+.zone .hmeta { min-width: 0; flex: 1; }
+.zone .eyebrow {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--zc);
+  margin-bottom: 3px; line-height: 1.1;
+}
+.zone h2 {
+  margin: 0 0 4px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(15px, 1.2vw, 19px);
+  color: var(--soil);
+  letter-spacing: -0.01em;
+  line-height: 1.14;
+  text-wrap: balance;
+}
+.zone h2 .en { display: block; }
+body.lang-fr .zone h2 .en,
+body.lang-fr .node .en { display: none; }
+body.lang-en .zone h2 .fr,
+body.lang-en .node .fr { display: none; }
 
-  @media (max-width: 1100px) {
-    .zone h2 { font-size: 11px; }
-    .node { font-size: 9.8px; padding: 3px 6px; }
-  }
+/* ─── Nodes — pill chips ─── */
+.nodes {
+  display: flex; flex-wrap: wrap;
+  gap: 6px 7px;
+  align-content: flex-start;
+  flex: 1;
+  min-width: 0;
+}
+.node {
+  position: relative;
+  background: var(--white);
+  border: 1px solid var(--zc);
+  border-radius: 9999px;
+  padding: 5px 13px 6px;
+  font-family: var(--font-sans); font-size: 12.5px;
+  line-height: 1.25;
+  color: var(--soil);
+  text-align: left; cursor: pointer;
+  max-width: 100%;
+  min-width: 0;
+  text-wrap: pretty;
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out),
+    opacity var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+.node .fr, .node .en {
+  display: inline;
+  white-space: normal;
+  font-weight: 500;
+  letter-spacing: -0.003em;
+}
+.node:hover {
+  background: var(--zc); border-color: var(--zc); color: var(--root);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(59,50,44,.14);
+}
+
+.node.dim { opacity: 0.28; }
+.node.highlight {
+  background: var(--zc); border-color: var(--zc); color: var(--root);
+  box-shadow: 0 0 0 3px var(--zt), 0 2px 10px rgba(59,50,44,.18);
+}
+
+/* ─── Legend ─── */
+.legend-wrap {
+  max-width: 1760px; margin: 20px auto 0;
+  padding: 24px 32px 12px;
+  display: grid; grid-template-columns: 1.3fr 1fr; gap: 40px;
+  border-top: 1px solid var(--soil-15);
+}
+.legend-wrap .block h3 {
+  margin: 0 0 12px;
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--soil-60);
+  font-weight: 400;
+}
+.legend-wrap .block h3 b { color: var(--soil); font-weight: 700; }
+.lgd {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 6px 22px;
+  font-size: 13px; color: var(--soil);
+}
+.lgd .lg {
+  display: flex; gap: 10px; align-items: baseline;
+  padding: 4px 0;
+  min-width: 0;
+}
+.lgd .lg .num {
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.08em;
+  color: var(--soil-60); min-width: 20px; flex: none;
+}
+.lgd .lg .sw {
+  width: 14px; height: 2px; background: var(--zc);
+  margin-top: 8px; flex: none;
+}
+.lgd .lg .lb { font-size: 14px; color: var(--soil); min-width: 0; line-height: 1.4; }
+
+.reading .note {
+  font-size: 14px; color: var(--soil-60); line-height: 1.6;
+  margin: 0 0 12px;
+  text-wrap: pretty;
+}
+.reading .note em { font-style: italic; color: var(--soil); }
+.reading .sources {
+  font-size: 12px; color: var(--soil-60); line-height: 1.6;
+  text-wrap: pretty;
+}
+.reading .sources em { font-style: italic; color: var(--soil); }
+
+/* ─── Printmark footer ─── */
+.printmark {
+  max-width: 1760px; margin: 0 auto;
+  padding: 18px 32px 36px;
+  border-top: 1px solid var(--soil-15);
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 20px;
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--soil-60);
+}
+.printmark .mark {
+  color: var(--soil);
+  display: inline-flex; align-items: center;
+}
+.printmark .mark svg { display: block; }
+.printmark .credit { text-align: right; line-height: 1.6; }
+
+/* ─── Side panel ─── */
+.panel-scrim {
+  position: fixed; inset: 0;
+  background: rgba(59, 50, 44, 0.22);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-base) var(--ease-out);
+  z-index: 90;
+}
+body.panel-open .panel-scrim { opacity: 1; pointer-events: auto; }
+
+.panel {
+  position: fixed; top: 0; right: 0; height: 100%;
+  width: min(520px, 94vw);
+  background: var(--white);
+  border-left: 1px solid var(--soil-15);
+  box-shadow: -18px 0 40px rgba(59,50,44,.14);
+  transform: translateX(100%);
+  transition: transform var(--duration-slow) var(--ease-out);
+  z-index: 100; overflow: auto;
+  display: flex; flex-direction: column;
+}
+.panel.open { transform: translateX(0); }
+.panel .ptop {
+  position: sticky; top: 0;
+  background: var(--white);
+  padding: 20px 56px 16px 28px;
+  border-bottom: 1px solid var(--soil-10);
+  z-index: 2;
+}
+.panel .close {
+  position: absolute; top: 14px; right: 16px;
+  width: 32px; height: 32px; border-radius: 9999px;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--soil-60); cursor: pointer;
+  background: none; border: 0;
+}
+.panel .close:hover { background: var(--soil-05); color: var(--soil); }
+.panel .zone-chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 4px 12px 4px 6px;
+  border: 1px solid var(--zc);
+  border-radius: 9999px;
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--zc);
+  margin-bottom: 14px;
+  max-width: 100%;
+}
+.panel .zone-chip .num {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 20px; height: 20px;
+  background: var(--zc); color: var(--root);
+  border-radius: 9999px;
+  font-weight: 700; font-size: 9.5px; padding: 0 6px;
+  flex: none;
+}
+.panel .zone-chip .zlabel {
+  min-width: 0; overflow: hidden; text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.panel h3.ptitle {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: clamp(22px, 2.4vw, 28px);
+  font-weight: 700;
+  letter-spacing: -0.02em; line-height: 1.12;
+  color: var(--soil);
+  text-wrap: balance;
+}
+.panel .pbody { padding: 20px 28px 32px; }
+.panel .pdef {
+  margin: 0;
+  font-size: 15.5px; line-height: 1.65; color: var(--soil);
+  text-wrap: pretty;
+}
+.panel .section-title {
+  margin: 24px 0 10px;
+  font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--soil-60);
+  display: flex; gap: 10px; align-items: baseline;
+}
+.panel .section-title::after {
+  content: ""; flex: 1; height: 1px; background: var(--soil-10);
+}
+.panel ul.subs { margin: 0; padding: 0; list-style: none; }
+.panel ul.subs li {
+  padding: 9px 0;
+  border-bottom: 1px solid var(--soil-05);
+  font-size: 14px; color: var(--soil); line-height: 1.45;
+  display: flex; gap: 10px; align-items: baseline;
+}
+.panel ul.subs li::before {
+  content: ""; width: 5px; height: 5px; border-radius: 9999px;
+  background: var(--zc, var(--soil-30));
+  margin-top: 7px; flex: none;
+}
+.panel .neighbors { display: flex; flex-wrap: wrap; gap: 6px; }
+.panel .neighbors a {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px;
+  background: var(--root);
+  border: 1px solid var(--soil-10);
+  border-radius: 9999px;
+  color: var(--soil); text-decoration: none;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out);
+  max-width: 100%;
+}
+.panel .neighbors a::before {
+  content: ""; width: 6px; height: 6px; border-radius: 9999px;
+  background: var(--ncol, var(--soil-30));
+  flex: none;
+}
+.panel .neighbors a:hover {
+  background: var(--white); border-color: var(--ncol, var(--soil-30));
+  transform: translateY(-1px);
+}
+.panel .neighbors a.ph-only { opacity: .55; cursor: default; }
+.panel .neighbors a.ph-only::after {
+  content: attr(data-todo);
+  font-family: var(--font-mono); font-size: 8px;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--soil-60);
+  margin-left: 4px;
+  padding: 1px 5px; border: 1px solid var(--soil-15); border-radius: 3px;
+}
+
+/* Small screen fallback */
+@media (max-width: 900px) {
+  .legend-wrap { grid-template-columns: 1fr; gap: 24px; }
+  .masthead { grid-template-columns: 1fr; }
+  .masthead .brandline.right { justify-content: flex-start; text-align: left; }
+  .stats { grid-template-columns: 1fr; }
+  .controls { justify-content: flex-start; }
+  .plate .zone h2 { font-size: 13px; }
+  .plate .node { font-size: 10.5px; }
+  .printmark { grid-template-columns: 1fr; text-align: left; }
+  .printmark .right, .printmark .center { text-align: left; }
+}
 </style>
 </head>
-<body class="lang-fr">
+<body class="lang-fr" data-screen-label="Map of Soil Science — Field Atlas">
 
-<header class="topbar">
-  <div class="titleblock">
-    <h1>Carte de la science des sols · <span style="color:var(--muted);font-weight:400">Map of Soil Science</span></h1>
-    <div class="sub">10 domaines · ~80 disciplines · 8 thèmes transversaux · <em>draft v2</em></div>
+<header class="masthead">
+  <div class="brandline">
+    <span>Ekodama</span>
+    <span class="dot"></span>
+    <span class="tag" data-i18n="plateTag">Planche I</span>
   </div>
-  <div class="controls">
-    <span class="label">Langue</span>
-    <button id="btn-fr" class="active" onclick="setLang('fr')">FR</button>
-    <button id="btn-en" onclick="setLang('en')">EN</button>
-    <button id="btn-both" onclick="setLang('both')">FR+EN</button>
-    <span class="sep"></span>
-    <span class="label">Liens</span>
-    <button id="btn-links" onclick="toggleLinks()">Afficher · Show</button>
-    <span class="sep"></span>
-    <span class="label">Thème transversal</span>
-    <select id="bridge-select" onchange="setBridge(this.value)">
-      <option value="">—</option>
-    </select>
+  <div></div>
+  <div class="brandline right">
+    <span class="tag" data-i18n="draftTag">Avril 2026 · Brouillon v2</span>
+    <span class="dot"></span>
+    <span>CC BY-SA 4.0</span>
+  </div>
+
+  <div class="title">
+    <h1 data-i18n="headingMain">La carte de la science des sols</h1>
+    <span class="sub" data-i18n-html="headingSub"></span>
   </div>
 </header>
 
-<div class="stage-wrap">
-  <div class="stage" id="stage">
-    <svg class="links" id="links" viewBox="0 0 1760 990" preserveAspectRatio="none"></svg>
-    <div class="bridge-banner" id="bridge-banner">
-      <span><b id="bridge-name">—</b> · <span id="bridge-desc"></span></span>
-      <button onclick="setBridge('')">Effacer · Clear</button>
+<div class="stats">
+  <div class="numbers">
+    <div class="n"><span class="num">10</span><span class="lbl" data-i18n="statDomains">Domaines</span></div>
+    <div class="n"><span class="num">85</span><span class="lbl" data-i18n="statDisciplines">Disciplines</span></div>
+    <div class="n"><span class="num">2</span><span class="lbl" data-i18n="statLangs">Langues</span></div>
+  </div>
+  <div class="blurb" data-i18n-html="blurb"></div>
+  <div class="controls">
+    <span class="grp">
+      <span class="glabel" data-i18n="ctrlLang">Langue</span>
+      <button class="chip active" id="btn-fr" onclick="setLang('fr')">FR</button>
+      <button class="chip"        id="btn-en" onclick="setLang('en')">EN</button>
+    </span>
+  </div>
+</div>
+
+<div class="plate-wrap">
+  <div class="plate" id="plate">
+    <div class="axis top"    data-i18n-html="axisTop"></div>
+    <div class="axis bottom" data-i18n-html="axisBottom"></div>
+    <div class="axis left"   data-i18n-html="axisLeft"></div>
+    <div class="axis right"  data-i18n-html="axisRight"></div>
+
+    <div class="plate-inner" id="plate-inner">
+      <!-- zones injected here -->
     </div>
   </div>
 </div>
 
-<aside class="panel" id="panel">
-  <button class="close" onclick="closePanel()">×</button>
-  <div class="chip" id="panel-zone"></div>
-  <h3 id="panel-title-fr"></h3>
-  <p class="en-title" id="panel-title-en"></p>
-  <div class="lang-block">
-    <div class="flag">Français</div>
-    <p id="panel-def-fr"></p>
+<div class="legend-wrap">
+  <div class="block">
+    <h3 data-i18n-html="legendTitle"></h3>
+    <div class="lgd" id="legend"></div>
   </div>
-  <div class="lang-block">
-    <div class="flag">English</div>
-    <p id="panel-def-en"></p>
+  <div class="block reading">
+    <h3 data-i18n-html="notesTitle"></h3>
+    <p class="note" data-i18n-html="notes1"></p>
+    <p class="sources" data-i18n-html="notes2"></p>
   </div>
-  <div class="section-title">Sous-branches &amp; topics · Sub-branches</div>
-  <ul class="subs" id="panel-subs"></ul>
-  <div class="section-title">Disciplines proches · Related</div>
-  <div class="neighbors" id="panel-neighbors"></div>
-</aside>
+</div>
 
-<footer class="footer">
-  Draft v2 · Inspired by <em>Domain of Science</em> (Dominic Walliman) and the AFES brainstorm (Feb 2023, T. Fungenzi, F. Feder, P. Billet &amp; C. Ducommun 2024).<br>
-  Taxonomy informed by IUSS divisions, SSSA divisions, EGU Soil System Sciences, AFES commissions, FAO/WRB, Encyclopedia of Soil Science (R. Lal ed.) and Brady &amp; Weil.
+<footer class="printmark">
+  <div class="mark" aria-label="Ekodama">
+    <svg width="28" height="23" viewBox="0 0 1001.83 823.67" aria-hidden="true">
+      <polyline fill="currentColor" points="216.97 536.68 216.97 95.16 379.14 0 379.14 .78 379.89 0 379.89 664.58 666.11 378.36 890.69 378.36 594.55 674.47 1001.83 673.73 1001.83 823.67 0 823.67 0 674.47 217.75 674.47"/>
+    </svg>
+  </div>
+  <div class="credit" data-i18n-html="printRight"></div>
 </footer>
 
+<div class="panel-scrim" id="panel-scrim" onclick="closePanel()"></div>
+
+<aside class="panel" id="panel" aria-hidden="true">
+  <div class="ptop">
+    <button class="close" onclick="closePanel()" aria-label="Close">
+      <i class="ph ph-x" style="font-size: 18px"></i>
+    </button>
+    <div class="zone-chip" id="panel-zone-chip">
+      <span class="num" id="panel-zone-num">00</span>
+      <span class="zlabel" id="panel-zone"></span>
+    </div>
+    <h3 class="ptitle" id="panel-title"></h3>
+  </div>
+  <div class="pbody">
+    <p class="pdef" id="panel-def"></p>
+    <div class="section-title" data-i18n="panelSubs">Sous-branches</div>
+    <ul class="subs" id="panel-subs"></ul>
+    <div class="section-title" data-i18n="panelNeighbors">Disciplines proches</div>
+    <div class="neighbors" id="panel-neighbors"></div>
+  </div>
+</aside>
+
+<script src="data.js"></script>
 <script>
-/* -----------------------------------------------------------------------------
-   ZONES — 10 buckets arranged on a 16:9 canvas.
-   Row 1 (top): origin / description of soils
-   Row 2 (mid): the three fundamental sciences
-   Row 3      : applied (plants, management, anthropogenic)
-   Row 4 (bot): context (environment, society)
-   ---------------------------------------------------------------------------*/
-const ZONES = [
-  { id:"z1",  color:"var(--c-z1)",  bbox:[0.02,0.05,0.48,0.21],
-    fr:"Pédogenèse &amp; genèse des sols", en:"Pedogenesis &amp; Soil Genesis" },
-  { id:"z2",  color:"var(--c-z2)",  bbox:[0.52,0.05,0.46,0.21],
-    fr:"Morphologie, classification &amp; cartographie", en:"Morphology, Classification &amp; Mapping" },
-
-  { id:"z3",  color:"var(--c-z3)",  bbox:[0.02,0.28,0.31,0.29],
-    fr:"Physique &amp; mécanique du sol", en:"Soil Physics &amp; Mechanics" },
-  { id:"z4",  color:"var(--c-z4)",  bbox:[0.345,0.28,0.31,0.29],
-    fr:"Chimie &amp; biogéochimie", en:"Soil Chemistry &amp; Biogeochemistry" },
-  { id:"z5",  color:"var(--c-z5)",  bbox:[0.67,0.28,0.31,0.29],
-    fr:"Biologie, microbiologie &amp; écologie", en:"Soil Biology, Microbiology &amp; Ecology" },
-
-  { id:"z6",  color:"var(--c-z6)",  bbox:[0.02,0.59,0.31,0.195],
-    fr:"Sols &amp; plantes (édaphologie)", en:"Soils &amp; Plants (Edaphology)" },
-  { id:"z7",  color:"var(--c-z7)",  bbox:[0.345,0.59,0.31,0.195],
-    fr:"Gestion &amp; usage des sols", en:"Soil Management &amp; Land Use" },
-  { id:"z8",  color:"var(--c-z8)",  bbox:[0.67,0.59,0.31,0.195],
-    fr:"Sols anthropogéniques", en:"Anthropogenic Soils" },
-
-  { id:"z9",  color:"var(--c-z9)",  bbox:[0.02,0.805,0.48,0.175],
-    fr:"Sols, environnement &amp; climat", en:"Soils, Environment &amp; Climate" },
-  { id:"z10", color:"var(--c-z10)", bbox:[0.52,0.805,0.46,0.175],
-    fr:"Sols &amp; société · frontières", en:"Soils &amp; Society · Frontiers" },
-];
-
-/* -----------------------------------------------------------------------------
-   NODES — each discipline with bilingual definition, sub-branches and neighbors.
-   ---------------------------------------------------------------------------*/
-const NODES = [
-  /* ====================== Z1 — PÉDOGENÈSE ====================== */
-  { id:"factors", zone:"z1",
-    fr:"Facteurs de formation (CLORPT)", en:"Soil-forming factors (CLORPT)",
-    defFr:"Les cinq grands facteurs de Jenny : climat, organismes, relief, roche-mère, temps (CLORPT) — enrichis aujourd'hui par les cadres SCORPAN et STEP-AWBH.",
-    defEn:"Jenny's five factors: climate, organisms, relief, parent material, time (CLORPT) — extended by modern frameworks such as SCORPAN and STEP-AWBH.",
-    subs:[ ["Climat","Climate"], ["Organismes","Organisms"], ["Relief","Relief / topography"],
-           ["Roche-mère","Parent material"], ["Temps","Time"], ["SCORPAN / STEP-AWBH","SCORPAN / STEP-AWBH"] ],
-    neighbors:["weathering","pedogenic-processes","soil-evolution","mapping-dsm","critical-zone"] },
-  { id:"weathering", zone:"z1",
-    fr:"Altération", en:"Weathering",
-    defFr:"Décomposition physique, chimique et biologique de la roche-mère — le premier pas vers un sol.",
-    defEn:"Physical, chemical and biological breakdown of parent material — the first step towards a soil.",
-    subs:[ ["Altération physique","Physical weathering"], ["Altération chimique","Chemical weathering"],
-           ["Altération biologique","Biological weathering"], ["Podzolisation / lessivage","Podzolisation / eluviation"] ],
-    neighbors:["factors","pedogenic-processes","mineralogy","critical-zone"] },
-  { id:"pedogenic-processes", zone:"z1",
-    fr:"Processus pédogénétiques", en:"Pedogenic processes",
-    defFr:"Mécanismes qui organisent le sol : brunification, podzolisation, rubéfaction, gleyification, vertisolisation…",
-    defEn:"The mechanisms that organise a soil: brunification, podzolisation, rubefaction, gleying, vertisolisation…",
-    subs:[ ["Brunification","Brunification"], ["Podzolisation","Podzolisation"], ["Rubéfaction","Rubefaction"],
-           ["Gleyification","Gleying"], ["Vertisolisation","Vertisolisation"], ["Translocation d'argiles","Clay translocation"] ],
-    neighbors:["factors","weathering","horizons","paleopedology","mineralogy"] },
-  { id:"horizons", zone:"z1",
-    fr:"Horizons &amp; profil", en:"Horizons &amp; soil profile",
-    defFr:"L'organisation verticale du sol en horizons O, A, E, B, C, R — la \"carte d'identité\" d'un sol.",
-    defEn:"The vertical organisation of a soil into horizons O, A, E, B, C, R — the fingerprint of any soil profile.",
-    subs:[ ["Horizons génétiques","Genetic horizons"], ["Symboles majeurs &amp; suffixes","Master horizons &amp; subscripts"],
-           ["Horizons diagnostiques","Diagnostic horizons"] ],
-    neighbors:["morphology","classification","micromorphology","pedogenic-processes"] },
-  { id:"paleopedology", zone:"z1",
-    fr:"Paléopédologie", en:"Paleopedology",
-    defFr:"Étude des paléosols — archives des climats, paysages et écosystèmes passés.",
-    defEn:"The study of paleosols — archives of past climates, landscapes and ecosystems.",
-    subs:[ ["Paléosols","Paleosols"], ["Reconstruction climatique","Paleoclimate reconstruction"],
-           ["Stratigraphie pédologique","Pedostratigraphy"] ],
-    neighbors:["pedogenic-processes","archaeology","micromorphology","soil-evolution"] },
-  { id:"anthropogenesis", zone:"z1",
-    fr:"Anthropogenèse des sols", en:"Soil anthropogenesis",
-    defFr:"Formation et transformation des sols sous l'action humaine directe (agriculture, terrassement, dépôts) — conduit aux anthroposols et technosols.",
-    defEn:"Soil formation and transformation driven directly by humans (farming, earthworks, deposits) — yielding anthrosols and technosols.",
-    subs:[ ["Anthroposols","Anthrosols"], ["Terra preta","Terra preta"], ["Sols archéologiques","Archaeological soils"],
-           ["Technosols","Technosols"] ],
-    neighbors:["urban-soils","technosols","archaeology","ethnopedology"] },
-  { id:"soil-evolution", zone:"z1",
-    fr:"Évolution &amp; vitesse de formation", en:"Soil evolution &amp; formation rates",
-    defFr:"Dynamiques longues : vitesses d'altération, temps de résidence, bilans de masse et équilibres entre genèse et érosion.",
-    defEn:"Long-term dynamics: weathering rates, residence times, mass balance and the balance between genesis and erosion.",
-    subs:[ ["Vitesses de formation","Formation rates"], ["Bilan de masse","Mass balance"],
-           ["Équilibre genèse-érosion","Production vs. erosion"] ],
-    neighbors:["factors","weathering","critical-zone","erosion"] },
-
-  /* ====================== Z2 — MORPHO / CLASSIFICATION / CARTO ====================== */
-  { id:"morphology", zone:"z2",
-    fr:"Morphologie du sol", en:"Soil morphology",
-    defFr:"Description visuelle et tactile sur le terrain : couleur Munsell, texture, structure, porosité, consistance.",
-    defEn:"Hands-on field description: Munsell colour, texture, structure, porosity, consistency.",
-    subs:[ ["Couleur Munsell","Munsell colour"], ["Texture","Texture"], ["Structure","Structure"],
-           ["Porosité &amp; pores","Porosity &amp; pores"], ["Traits pédologiques","Pedological features"] ],
-    neighbors:["micromorphology","survey","classification","horizons"] },
-  { id:"micromorphology", zone:"z2",
-    fr:"Micromorphologie", en:"Soil micromorphology",
-    defFr:"Observation de lames minces de sol au microscope pour décrire la microstructure et les traits pédogénétiques fins.",
-    defEn:"Microscope observation of soil thin sections to describe microstructure and fine pedogenic features.",
-    subs:[ ["Lames minces","Thin sections"], ["Microstructure","Microstructure"], ["Traits micropédologiques","Micropedogenic features"] ],
-    neighbors:["morphology","pedogenic-processes","paleopedology","mineralogy"] },
-  { id:"survey", zone:"z2",
-    fr:"Prospection pédologique", en:"Soil survey",
-    defFr:"Reconnaissance systématique sur le terrain — fosses, sondages, prélèvements, descriptions — au cœur de toute connaissance territoriale du sol.",
-    defEn:"Systematic field reconnaissance — pits, augers, sampling, descriptions — backbone of any territorial soil knowledge.",
-    subs:[ ["Fosses pédologiques","Soil pits"], ["Sondages à la tarière","Auger sampling"],
-           ["Échantillonnage","Sampling design"], ["Cartes de sondages","Observation maps"] ],
-    neighbors:["morphology","classification","cartography","dsm","pedometrics"] },
-  { id:"classification", zone:"z2",
-    fr:"Classification des sols", en:"Soil classification",
-    defFr:"Systèmes internationaux et nationaux qui organisent la diversité des sols : WRB, Soil Taxonomy (USDA), Référentiel pédologique (FR).",
-    defEn:"International and national systems that organise soil diversity: WRB, USDA Soil Taxonomy, and France's Référentiel Pédologique.",
-    subs:[ ["WRB (FAO/IUSS)","WRB"], ["Soil Taxonomy (USDA)","USDA Soil Taxonomy"],
-           ["Référentiel pédologique (RP)","French Référentiel Pédologique"], ["Classifications nationales","National systems"] ],
-    neighbors:["morphology","survey","horizons","ethnopedology"] },
-  { id:"cartography", zone:"z2",
-    fr:"Cartographie des sols", en:"Soil cartography",
-    defFr:"Représentation spatiale des sols et de leurs propriétés à différentes échelles — du 1:10 000 communal au 1:1 000 000 national.",
-    defEn:"Spatial representation of soils and soil properties at scales from the parcel (1:10 000) to the continent (1:1 000 000).",
-    subs:[ ["Cartes des sols","Soil maps"], ["Légendes &amp; typologies","Legend design"],
-           ["Échelles cartographiques","Mapping scales"], ["Bases de données sols","Soil databases"] ],
-    neighbors:["survey","dsm","pedometrics","remote-sensing"] },
-  { id:"dsm", zone:"z2",
-    fr:"Cartographie numérique (DSM)", en:"Digital soil mapping (DSM)",
-    defFr:"Prédiction spatiale des sols par modèles (SCORPAN) à partir de covariables environnementales, imagerie et apprentissage machine.",
-    defEn:"Model-based spatial prediction of soils (SCORPAN) using environmental covariates, imagery and machine learning.",
-    subs:[ ["Cadre SCORPAN","SCORPAN framework"], ["Apprentissage machine","Machine learning"],
-           ["Covariables environnementales","Environmental covariates"], ["Évaluation numérique des sols","Digital soil assessment"] ],
-    neighbors:["pedometrics","remote-sensing","cartography","modeling","soil-security"] },
-  { id:"pedometrics", zone:"z2",
-    fr:"Pédométrie", en:"Pedometrics",
-    defFr:"Application des statistiques et de la géostatistique aux sols : variabilité spatiale, incertitude, inférence.",
-    defEn:"Statistical and geostatistical analysis of soils: spatial variability, uncertainty and inference.",
-    subs:[ ["Géostatistique","Geostatistics"], ["Krigeage","Kriging"], ["Incertitudes","Uncertainty"],
-           ["Plans d'échantillonnage","Sampling design"] ],
-    neighbors:["dsm","cartography","modeling","metrology"] },
-  { id:"remote-sensing", zone:"z2",
-    fr:"Télédétection &amp; spectroscopie", en:"Remote sensing &amp; spectroscopy",
-    defFr:"Observation des sols par satellites, drones et capteurs proches : humidité, MO, salinité, signatures spectrales (Vis-NIR, MIR).",
-    defEn:"Soil observation from satellites, drones and proximal sensors: moisture, SOM, salinity, and Vis-NIR / MIR spectra.",
-    subs:[ ["Imagerie satellite","Satellite imagery"], ["Drones &amp; UAV","UAV platforms"],
-           ["Spectroscopie Vis-NIR &amp; MIR","Vis-NIR &amp; MIR spectroscopy"], ["Géophysique proche-surface","Near-surface geophysics"] ],
-    neighbors:["dsm","cartography","metrology","modeling","salinity"] },
-
-  /* ====================== Z3 — PHYSIQUE & MÉCANIQUE ====================== */
-  { id:"physical-props", zone:"z3",
-    fr:"Propriétés physiques", en:"Physical properties",
-    defFr:"Masse volumique, porosité, densité apparente, texture granulométrique — les paramètres de base du sol physique.",
-    defEn:"Bulk density, porosity, particle density, grain-size texture — the physical baseline of a soil.",
-    subs:[ ["Densité apparente / réelle","Bulk / particle density"], ["Porosité","Porosity"],
-           ["Granulométrie","Particle-size distribution"] ],
-    neighbors:["structure","pedotransfer","metrology","pedogenic-processes"] },
-  { id:"structure", zone:"z3",
-    fr:"Structure &amp; agrégation", en:"Structure &amp; aggregation",
-    defFr:"Formation, stabilité et géométrie des agrégats — architecture poreuse du sol et habitat des organismes.",
-    defEn:"Formation, stability and geometry of soil aggregates — porous architecture and microbial habitat.",
-    subs:[ ["Agrégats","Aggregates"], ["Stabilité structurale","Aggregate stability"],
-           ["Porosité fonctionnelle","Functional porosity"], ["Battance","Surface crusting"] ],
-    neighbors:["physical-props","tillage","som","microbio"] },
-  { id:"hydrology", zone:"z3",
-    fr:"Hydrologie du sol", en:"Soil hydrology",
-    defFr:"Infiltration, rétention, drainage, écoulements préférentiels : le sol comme réservoir et régulateur de l'eau.",
-    defEn:"Infiltration, retention, drainage, preferential flow: the soil as water reservoir and regulator.",
-    subs:[ ["Infiltration","Infiltration"], ["Ruissellement","Runoff"], ["Écoulements préférentiels","Preferential flow"],
-           ["Drainage","Drainage"] ],
-    neighbors:["retention","structure","wetlands","modeling","irrigation"] },
-  { id:"retention", zone:"z3",
-    fr:"Rétention &amp; potentiel hydrique (pF)", en:"Water retention &amp; matric potential (pF)",
-    defFr:"Courbes de rétention, potentiel matriciel, capillarité — comment le sol retient et cède l'eau aux plantes.",
-    defEn:"Retention curves, matric potential, capillarity — how soils hold and release water to plants.",
-    subs:[ ["Courbe de rétention (pF)","Retention curve (pF)"], ["Capacité au champ","Field capacity"],
-           ["Point de flétrissement","Wilting point"], ["Capillarité","Capillarity"] ],
-    neighbors:["hydrology","pedotransfer","physical-props","spac","plant-nutrition"] },
-  { id:"thermal", zone:"z3",
-    fr:"Propriétés thermiques", en:"Thermal properties",
-    defFr:"Transfert et stockage de chaleur — régime thermique et conséquences écologiques et climatiques.",
-    defEn:"Heat transfer and storage — the thermal regime and its ecological and climatic consequences.",
-    subs:[ ["Conductivité thermique","Thermal conductivity"], ["Régime thermique","Thermal regime"],
-           ["Pergélisol / gel","Permafrost / freezing"] ],
-    neighbors:["hydrology","cryosols","climate-feedback"] },
-  { id:"aeration", zone:"z3",
-    fr:"Aération &amp; gaz du sol", en:"Soil aeration &amp; gases",
-    defFr:"Diffusion des gaz (O₂, CO₂, N₂O, CH₄), conditions redox et émissions de gaz à effet de serre.",
-    defEn:"Gas diffusion (O₂, CO₂, N₂O, CH₄), redox conditions and greenhouse-gas emissions.",
-    subs:[ ["Diffusion des gaz","Gas diffusion"], ["Anaérobie / hydromorphie","Anaerobic / hydromorphy"],
-           ["Émissions GES","Greenhouse-gas emissions"] ],
-    neighbors:["hydrology","redox","wetlands","carbon-climate"] },
-  { id:"mechanics", zone:"z3",
-    fr:"Mécanique des sols &amp; compaction", en:"Soil mechanics &amp; compaction",
-    defFr:"Résistance, cisaillement, plasticité, compaction sous machines — à l'interface agronomie / génie civil.",
-    defEn:"Strength, shear, plasticity, machinery compaction — at the interface of agronomy and civil engineering.",
-    subs:[ ["Compaction","Compaction"], ["Cisaillement","Shear strength"], ["Plasticité (Atterberg)","Plasticity (Atterberg)"],
-           ["Portance","Bearing capacity"] ],
-    neighbors:["structure","tillage","geotech","urban-soils"] },
-  { id:"shrink-swell", zone:"z3",
-    fr:"Retrait-gonflement", en:"Shrink-swell behaviour",
-    defFr:"Variation de volume des sols argileux — fissuration, pédoturbation (vertisolisation), enjeux géotechniques majeurs.",
-    defEn:"Volume change in clay soils — cracking, pedoturbation (vertisolisation) and major geotechnical hazards.",
-    subs:[ ["Argiles gonflantes","Swelling clays"], ["Vertisols","Vertisols"],
-           ["Fissuration","Cracking"], ["Aléa bâtiment","Building hazard"] ],
-    neighbors:["mechanics","clay","geotech","pedogenic-processes"] },
-  { id:"pedotransfer", zone:"z3",
-    fr:"Fonctions de pédotransfert (PTF)", en:"Pedotransfer functions (PTFs)",
-    defFr:"Relations empiriques reliant des propriétés mesurables simples aux propriétés complexes (hydriques, mécaniques) pour modéliser le sol.",
-    defEn:"Empirical relationships linking simple measurements to complex (hydraulic, mechanical) properties for soil modelling.",
-    subs:[ ["PTF hydrauliques","Hydraulic PTFs"], ["PTF mécaniques","Mechanical PTFs"],
-           ["Apprentissage machine","Machine learning"] ],
-    neighbors:["retention","modeling","pedometrics","metrology"] },
-
-  /* ====================== Z4 — CHIMIE & BIOGÉOCHIMIE ====================== */
-  { id:"chemistry", zone:"z4",
-    fr:"Chimie du sol", en:"Soil chemistry",
-    defFr:"Composition, réactions, équilibres — majeurs et traces dans la phase solide et en solution.",
-    defEn:"Composition, reactions and equilibria — major and trace elements in solid and solution phases.",
-    subs:[ ["Composition élémentaire","Elemental composition"], ["Solution du sol","Soil solution"],
-           ["Équilibres","Chemical equilibria"] ],
-    neighbors:["physico-chemistry","mineralogy","biogeochem","fertility"] },
-  { id:"physico-chemistry", zone:"z4",
-    fr:"Physico-chimie &amp; surfaces", en:"Physico-chemistry &amp; surfaces",
-    defFr:"Interfaces solide-solution : charge, adsorption, CEC, complexation, colloïdes.",
-    defEn:"Solid-solution interfaces: charge, adsorption, CEC, complexation, colloids.",
-    subs:[ ["Charge de surface","Surface charge"], ["CEC / AEC","CEC / AEC"],
-           ["Adsorption","Adsorption"], ["Colloïdes","Colloids"] ],
-    neighbors:["chemistry","clay","mineralogy","metals"] },
-  { id:"mineralogy", zone:"z4",
-    fr:"Minéralogie du sol", en:"Soil mineralogy",
-    defFr:"Minéraux primaires et secondaires : oxydes de Fe/Al, carbonates, silicates, phosphates — et leur rôle pédogénétique.",
-    defEn:"Primary and secondary minerals: Fe/Al oxides, carbonates, silicates, phosphates — and their pedogenic role.",
-    subs:[ ["Oxydes Fe/Al","Fe/Al oxides"], ["Carbonates","Carbonates"], ["Minéraux primaires","Primary minerals"],
-           ["Minéraux secondaires","Secondary minerals"] ],
-    neighbors:["clay","chemistry","pedogenic-processes","forensics"] },
-  { id:"clay", zone:"z4",
-    fr:"Science des argiles", en:"Clay science",
-    defFr:"Phyllosilicates : structure, réactivité, gonflement, interactions organo-minérales — clé de la physico-chimie des sols.",
-    defEn:"Phyllosilicates: structure, reactivity, swelling, organo-mineral interactions — keystone of soil physico-chemistry.",
-    subs:[ ["Phyllosilicates","Phyllosilicates"], ["Kaolinite / smectite / illite","Kaolinite / smectite / illite"],
-           ["Complexes organo-minéraux","Organo-mineral complexes"] ],
-    neighbors:["mineralogy","physico-chemistry","shrink-swell","som"] },
-  { id:"acidity", zone:"z4",
-    fr:"Acidité &amp; pH", en:"Acidity &amp; pH",
-    defFr:"Équilibres acide-base, toxicité aluminique, pouvoir tampon — déterminants majeurs de la fertilité et de la biodisponibilité.",
-    defEn:"Acid-base equilibria, aluminium toxicity and buffering — central to fertility and bioavailability.",
-    subs:[ ["pH du sol","Soil pH"], ["Toxicité Al","Aluminium toxicity"],
-           ["Pouvoir tampon","Buffering capacity"], ["Chaulage","Liming"] ],
-    neighbors:["chemistry","fertility","acid-soils","physico-chemistry"] },
-  { id:"redox", zone:"z4",
-    fr:"Oxydo-réduction", en:"Redox chemistry",
-    defFr:"Chimie des sols anoxiques : fer, manganèse, soufre, azote — gleyification et dynamiques des zones humides.",
-    defEn:"Chemistry of anoxic soils: iron, manganese, sulfur, nitrogen — gleying and wetland dynamics.",
-    subs:[ ["Fer &amp; manganèse","Iron &amp; manganese"], ["Gleyification","Gleying"],
-           ["Dénitrification","Denitrification"], ["Sulfures","Sulfides"] ],
-    neighbors:["wetlands","aeration","biogeochem","microbio"] },
-  { id:"biogeochem", zone:"z4",
-    fr:"Cycles biogéochimiques", en:"Biogeochemical cycles",
-    defFr:"Cycles couplés du C, N, P, S et des métaux à l'interface vivants–minéraux–solutions — fondation des services écosystémiques.",
-    defEn:"Coupled cycles of C, N, P, S and metals at the biota-mineral-solution interface — the foundation of soil ecosystem services.",
-    subs:[ ["Cycle du carbone","Carbon cycle"], ["Cycle de l'azote","Nitrogen cycle"],
-           ["Cycle du phosphore","Phosphorus cycle"], ["Cycle du soufre","Sulfur cycle"],
-           ["Cycles couplés","Coupled cycles"] ],
-    neighbors:["som","microbio","carbon-climate","redox","ecosystem-services"] },
-  { id:"som", zone:"z4",
-    fr:"Matières organiques (MO)", en:"Soil organic matter (SOM)",
-    defFr:"Origine, composition, stabilisation et dynamique des MO — cœur de la fertilité, de la structure et du cycle du carbone.",
-    defEn:"Origin, composition, stabilisation and dynamics of SOM — core to fertility, structure and the carbon cycle.",
-    subs:[ ["Humus &amp; humification","Humus &amp; humification"], ["Fractions de MO","SOM fractions"],
-           ["Stabilisation","Stabilisation"], ["MO dissoutes","Dissolved organic matter"] ],
-    neighbors:["biogeochem","biochemistry","microbio","carbon-climate","fertility","health"] },
-  { id:"metals", zone:"z4",
-    fr:"Éléments traces &amp; spéciation", en:"Trace elements &amp; speciation",
-    defFr:"Métaux et métalloïdes : spéciation, mobilité, biodisponibilité et toxicité (Pb, Cd, As, Cu, Zn…).",
-    defEn:"Metals and metalloids: speciation, mobility, bioavailability and toxicity (Pb, Cd, As, Cu, Zn…).",
-    subs:[ ["Spéciation","Speciation"], ["Mobilité","Mobility"], ["Biodisponibilité","Bioavailability"],
-           ["Radionucléides","Radionuclides"] ],
-    neighbors:["chemistry","physico-chemistry","contamination","remediation","forensics"] },
-
-  /* ====================== Z5 — BIOLOGIE, MICROBIO, ÉCOLOGIE ====================== */
-  { id:"biology", zone:"z5",
-    fr:"Biologie du sol", en:"Soil biology",
-    defFr:"Ensemble du vivant dans le sol — micro-, méso- et macro-organismes — et leurs fonctions.",
-    defEn:"All life in the soil — micro-, meso- and macro-organisms — and the functions they drive.",
-    subs:[ ["Micro-organismes","Microorganisms"], ["Mésofaune","Mesofauna"], ["Macrofaune","Macrofauna"] ],
-    neighbors:["microbio","fauna","ecology","health"] },
-  { id:"microbio", zone:"z5",
-    fr:"Microbiologie du sol", en:"Soil microbiology",
-    defFr:"Bactéries, archées, champignons, virus : diversité, fonctions et interactions dans le sol.",
-    defEn:"Bacteria, archaea, fungi and viruses: diversity, functions and interactions in soil.",
-    subs:[ ["Bactéries &amp; archées","Bacteria &amp; archaea"], ["Virus du sol","Soil viruses"],
-           ["Communautés microbiennes","Microbial communities"] ],
-    neighbors:["fungi","biochemistry","biogeochem","rhizosphere","metagenomics"] },
-  { id:"fungi", zone:"z5",
-    fr:"Champignons &amp; mycorhizes", en:"Fungi &amp; mycorrhizae",
-    defFr:"Champignons saprophytes, pathogènes et symbiotiques — mycorhizes arbusculaires et ectomycorhizes.",
-    defEn:"Saprotrophic, pathogenic and symbiotic fungi — arbuscular and ectomycorrhizal associations.",
-    subs:[ ["Saprophytes","Saprotrophs"], ["Mycorhizes arbusculaires","Arbuscular mycorrhizae"],
-           ["Ectomycorhizes","Ectomycorrhizae"], ["Mycélium","Mycelial networks"] ],
-    neighbors:["microbio","rhizosphere","plant-nutrition","forest-soils"] },
-  { id:"fauna", zone:"z5",
-    fr:"Faune du sol", en:"Soil fauna",
-    defFr:"Invertébrés du sol : protozoaires, nématodes, acariens, collemboles, fourmis, vers de terre — ingénieurs du sol.",
-    defEn:"Soil invertebrates — protozoa, nematodes, mites, collembola, ants, earthworms — the soil engineers.",
-    subs:[ ["Vers de terre","Earthworms"], ["Collemboles / acariens","Collembola / mites"],
-           ["Nématodes","Nematodes"], ["Fourmis &amp; termites","Ants &amp; termites"] ],
-    neighbors:["biology","ecology","structure","som","health"] },
-  { id:"ecology", zone:"z5",
-    fr:"Écologie du sol", en:"Soil ecology",
-    defFr:"Interactions et réseaux trophiques dans le sol ; lien entre biodiversité et fonctionnement écosystémique.",
-    defEn:"Soil interactions and food webs, and the link between biodiversity and ecosystem functioning.",
-    subs:[ ["Réseaux trophiques","Food webs"], ["Relations bio-fonctions","Biodiversity-function"],
-           ["Succession","Ecological succession"], ["Biogéographie","Biogeography"] ],
-    neighbors:["biology","biodiversity","ecosystem-services","forest-soils","wetlands"] },
-  { id:"biodiversity", zone:"z5",
-    fr:"Biodiversité des sols", en:"Soil biodiversity",
-    defFr:"Diversité génétique, taxonomique et fonctionnelle des communautés du sol — enjeu mondial encore peu cartographié.",
-    defEn:"Genetic, taxonomic and functional diversity of soil communities — a global concern still poorly mapped.",
-    subs:[ ["Diversité taxonomique","Taxonomic diversity"], ["Diversité fonctionnelle","Functional diversity"],
-           ["Bio-indicateurs","Bioindicators"] ],
-    neighbors:["ecology","fauna","microbio","health","ecosystem-services"] },
-  { id:"biochemistry", zone:"z5",
-    fr:"Biochimie &amp; enzymes", en:"Biochemistry &amp; enzymes",
-    defFr:"Réactions biochimiques médiées par les organismes — enzymes, métabolites, transformations de la MO.",
-    defEn:"Organism-mediated biochemical reactions — enzymes, metabolites, and transformation of SOM.",
-    subs:[ ["Activités enzymatiques","Enzyme activities"], ["Métabolites","Metabolites"],
-           ["Dégradation MO","SOM degradation"] ],
-    neighbors:["microbio","som","biogeochem","health"] },
-  { id:"metagenomics", zone:"z5",
-    fr:"Métagénomique &amp; 'omics'", en:"Metagenomics &amp; omics",
-    defFr:"Approches moléculaires haut débit (ADN, ARN, protéines, métabolites) pour sonder le sol caché.",
-    defEn:"High-throughput molecular approaches (DNA, RNA, proteins, metabolites) to probe the hidden soil.",
-    subs:[ ["Métagénomique","Metagenomics"], ["Métatranscriptomique","Metatranscriptomics"],
-           ["Métaprotéomique","Metaproteomics"], ["eDNA","eDNA"] ],
-    neighbors:["microbio","biodiversity","biochemistry","metrology"] },
-  { id:"rhizosphere", zone:"z5",
-    fr:"Rhizosphère", en:"Rhizosphere",
-    defFr:"Volume de sol influencé par les racines : hotspot d'activité biologique et biogéochimique.",
-    defEn:"The zone of soil shaped by roots — a hotspot of biological and biogeochemical activity.",
-    subs:[ ["Exsudats racinaires","Root exudates"], ["Priming effect","Priming effect"],
-           ["Bactéries promotrices","PGPR"], ["Interactions multi-trophiques","Multi-trophic interactions"] ],
-    neighbors:["microbio","fungi","plant-nutrition","roots","edaphology"] },
-
-  /* ====================== Z6 — SOLS & PLANTES (ÉDAPHOLOGIE) ====================== */
-  { id:"edaphology", zone:"z6",
-    fr:"Édaphologie", en:"Edaphology",
-    defFr:"Le sol vu comme milieu de vie des plantes — l'autre grande branche de la science des sols, complémentaire à la pédologie <em>s.s.</em>",
-    defEn:"Soil as a plant-growth medium — the other great branch of soil science, complementary to pedology <em>s.s.</em>",
-    subs:[ ["Habitats édaphiques","Edaphic habitats"], ["Edaphisme","Edaphism"],
-           ["Autoecologie des sols","Soil autecology"] ],
-    neighbors:["plant-nutrition","fertility","roots","spac"] },
-  { id:"plant-nutrition", zone:"z6",
-    fr:"Nutrition minérale des plantes", en:"Plant mineral nutrition",
-    defFr:"Prélèvement racinaire des macro- et micro-éléments : N, P, K, Ca, Mg, S, micronutriments.",
-    defEn:"Root uptake of macro- and micro-nutrients: N, P, K, Ca, Mg, S and micronutrients.",
-    subs:[ ["Macroéléments","Macronutrients"], ["Micronutriments","Micronutrients"],
-           ["Carences &amp; toxicités","Deficiencies &amp; toxicities"] ],
-    neighbors:["edaphology","fertility","rhizosphere","acidity"] },
-  { id:"fertility", zone:"z6",
-    fr:"Fertilité des sols", en:"Soil fertility",
-    defFr:"Capacité du sol à fournir les nutriments dans l'espace et le temps — propriétés physiques, chimiques et biologiques conjuguées.",
-    defEn:"The soil's capacity to supply nutrients in space and time — combining physical, chemical and biological properties.",
-    subs:[ ["Indicateurs de fertilité","Fertility indicators"], ["Diagnostic de fertilité","Fertility diagnostics"],
-           ["Fertilité physique / chimique / biologique","Physical / chemical / biological fertility"] ],
-    neighbors:["plant-nutrition","som","fertilization","health","agri-soils"] },
-  { id:"roots", zone:"z6",
-    fr:"Architecture racinaire", en:"Root architecture",
-    defFr:"Morphologie, profondeur et plasticité des systèmes racinaires — interface entre plante et sol.",
-    defEn:"Morphology, depth and plasticity of root systems — the plant-soil interface.",
-    subs:[ ["Phénotypage racinaire","Root phenotyping"], ["Profondeur d'enracinement","Rooting depth"],
-           ["Plasticité","Plasticity"] ],
-    neighbors:["rhizosphere","edaphology","spac","structure"] },
-  { id:"symbioses", zone:"z6",
-    fr:"Symbioses plantes-microorganismes", en:"Plant-microbe symbioses",
-    defFr:"Mycorhizes, rhizobiums, endophytes, PGPR : partenariats microbiens au service de la plante.",
-    defEn:"Mycorrhizae, rhizobia, endophytes, PGPR: microbial partnerships that work for the plant.",
-    subs:[ ["Mycorhizes","Mycorrhizae"], ["Fixation symbiotique N₂","Symbiotic N₂ fixation"],
-           ["Endophytes","Endophytes"] ],
-    neighbors:["fungi","microbio","rhizosphere","plant-nutrition"] },
-  { id:"spac", zone:"z6",
-    fr:"Continuum sol-plante-atmosphère (SPAC)", en:"Soil-plant-atmosphere continuum (SPAC)",
-    defFr:"Cadre physiologique couplant transpiration, potentiel hydrique et transferts — base de l'agro-hydrologie.",
-    defEn:"Physiological framework coupling transpiration, water potential and fluxes — foundation of agro-hydrology.",
-    subs:[ ["Potentiel hydrique","Water potential"], ["Transpiration","Transpiration"],
-           ["Stress hydrique","Water stress"], ["Redistribution hydraulique","Hydraulic redistribution"] ],
-    neighbors:["retention","hydrology","plant-nutrition","irrigation","climate-feedback"] },
-  { id:"fertilization", zone:"z6",
-    fr:"Fertilisation &amp; amendements", en:"Fertilization &amp; amendments",
-    defFr:"Diagnostic nutritif, apports minéraux et organiques, amendements calciques et organiques.",
-    defEn:"Nutrient diagnostics, mineral and organic inputs, liming and organic amendments.",
-    subs:[ ["Engrais minéraux","Mineral fertilizers"], ["Amendements organiques","Organic amendments"],
-           ["Chaulage","Liming"], ["Biochar","Biochar"] ],
-    neighbors:["fertility","plant-nutrition","acidity","som","agri-soils"] },
-
-  /* ====================== Z7 — GESTION & USAGE DES SOLS ====================== */
-  { id:"agri-soils", zone:"z7",
-    fr:"Sols agricoles", en:"Agricultural soils",
-    defFr:"Sols cultivés : enjeux de fertilité, travail, rotations, agro-écologie, couverts.",
-    defEn:"Cultivated soils: fertility, tillage, rotations, agro-ecology, cover crops.",
-    subs:[ ["Grandes cultures","Arable soils"], ["Viticulture","Viticulture soils"],
-           ["Cultures pérennes","Perennial crops"], ["Agroécologie","Agro-ecology"] ],
-    neighbors:["fertility","tillage","cover-crops","health","erosion"] },
-  { id:"forest-soils", zone:"z7",
-    fr:"Sols forestiers", en:"Forest soils",
-    defFr:"Sols sous couvert forestier : humus, litière, cycles lents, nutrition des peuplements.",
-    defEn:"Soils under forest cover: humus forms, litter, slow cycles, stand nutrition.",
-    subs:[ ["Formes d'humus","Humus forms"], ["Litière","Litter"],
-           ["Nutrition forestière","Forest nutrition"] ],
-    neighbors:["ecology","som","fungi","pedogenic-processes"] },
-  { id:"grasslands", zone:"z7",
-    fr:"Prairies &amp; pastoralisme", en:"Grasslands &amp; rangelands",
-    defFr:"Sols de prairies permanentes et pastorales : séquestration de C, compaction par le pâturage.",
-    defEn:"Permanent-grassland and rangeland soils: C sequestration, grazing-induced compaction.",
-    subs:[ ["Pâturage","Grazing"], ["Prairies permanentes","Permanent grasslands"] ],
-    neighbors:["som","structure","carbon-climate","agri-soils"] },
-  { id:"tillage", zone:"z7",
-    fr:"Travail du sol", en:"Tillage systems",
-    defFr:"Labour, travail réduit, semis direct, agriculture de conservation — et leurs conséquences sur la structure et la vie du sol.",
-    defEn:"Plough, reduced tillage, no-till, conservation agriculture — and their effects on structure and soil life.",
-    subs:[ ["Labour","Ploughing"], ["Travail réduit","Reduced tillage"], ["Semis direct","No-till"],
-           ["Agriculture de conservation","Conservation agriculture"] ],
-    neighbors:["structure","mechanics","cover-crops","health","erosion"] },
-  { id:"cover-crops", zone:"z7",
-    fr:"Couverts &amp; rotations", en:"Cover crops &amp; rotations",
-    defFr:"Cultures intermédiaires, rotations longues, intercultures — restitutions organiques et protection des sols.",
-    defEn:"Cover crops, long rotations and inter-cropping — organic returns and soil protection.",
-    subs:[ ["Cultures intermédiaires","Cover crops"], ["Rotations","Rotations"],
-           ["Engrais verts","Green manures"] ],
-    neighbors:["agri-soils","tillage","som","fertility"] },
-  { id:"irrigation", zone:"z7",
-    fr:"Irrigation &amp; gestion de l'eau", en:"Irrigation &amp; water management",
-    defFr:"Techniques d'irrigation, drainage, gestion des eaux usées et saline — un levier majeur et risqué.",
-    defEn:"Irrigation and drainage techniques, wastewater and saline water management — a powerful yet risky lever.",
-    subs:[ ["Irrigation gravitaire","Surface irrigation"], ["Micro-irrigation","Micro-irrigation"],
-           ["Irrigation saline","Saline irrigation"], ["Drainage","Drainage"] ],
-    neighbors:["hydrology","salinity","spac","agri-soils"] },
-  { id:"agroforestry", zone:"z7",
-    fr:"Agroforesterie", en:"Agroforestry",
-    defFr:"Association d'arbres et de cultures/élevage — effets sur structure, MO, biodiversité et microclimat du sol.",
-    defEn:"Integrating trees with crops and livestock — effects on structure, SOM, biodiversity and soil microclimate.",
-    subs:[ ["Agroforesterie tempérée","Temperate agroforestry"], ["Systèmes agroforestiers tropicaux","Tropical agroforestry"] ],
-    neighbors:["agri-soils","forest-soils","som","biodiversity"] },
-  { id:"conservation", zone:"z7",
-    fr:"Conservation &amp; restauration", en:"Conservation &amp; restoration",
-    defFr:"Pratiques, politiques et techniques de protection, restauration et réhabilitation des sols dégradés.",
-    defEn:"Practices, policies and techniques for protecting, restoring and rehabilitating degraded soils.",
-    subs:[ ["Lutte antiérosive","Erosion control"], ["Restauration des sols","Soil restoration"],
-           ["Réhabilitation de sites","Site rehabilitation"] ],
-    neighbors:["erosion","degradation","health","law","remediation"] },
-
-  /* ====================== Z8 — SOLS ANTHROPOGÉNIQUES ====================== */
-  { id:"urban-soils", zone:"z8",
-    fr:"Sols urbains (SUITMA)", en:"Urban soils (SUITMA)",
-    defFr:"Cadre SUITMA (urbains, industriels, transports, miniers, militaires) — sols souvent fabriqués ou profondément remaniés.",
-    defEn:"SUITMA framework (Urban, Industrial, Traffic, Mining, Military soils) — often man-made or deeply reworked.",
-    subs:[ ["Parcs &amp; jardins urbains","Urban parks"], ["Remblais","Artificial fill"],
-           ["Services écosystémiques urbains","Urban ecosystem services"] ],
-    neighbors:["technosols","sealing","anthropogenesis","geotech","contamination"] },
-  { id:"technosols", zone:"z8",
-    fr:"Technosols", en:"Technosols",
-    defFr:"Sols artificiels dominés par des matériaux anthropiques — gravats, mâchefers, déchets miniers, substrats reconstitués.",
-    defEn:"Artificial soils dominated by human-made materials — rubble, slag, mine waste, engineered substrates.",
-    subs:[ ["Mâchefers","Slag / bottom ash"], ["Sédiments pollués","Contaminated sediments"],
-           ["Substrats construits","Engineered substrates"] ],
-    neighbors:["urban-soils","mining-soils","anthropogenesis","remediation"] },
-  { id:"mining-soils", zone:"z8",
-    fr:"Sols miniers &amp; post-miniers", en:"Mining &amp; post-mining soils",
-    defFr:"Sols très perturbés par l'extraction : stériles, verses, bassins, drainage minier acide — enjeux de restauration majeurs.",
-    defEn:"Soils profoundly disturbed by extraction: tailings, dumps, ponds, acid mine drainage — major restoration challenges.",
-    subs:[ ["Drainage minier acide","Acid mine drainage"], ["Stériles","Tailings"],
-           ["Restauration minière","Mine restoration"] ],
-    neighbors:["technosols","remediation","metals","contamination"] },
-  { id:"contamination", zone:"z8",
-    fr:"Sols contaminés", en:"Contaminated soils",
-    defFr:"Pollutions métalliques, organiques et radioactives : diagnostic, modélisation et gestion des risques.",
-    defEn:"Metal, organic and radioactive contamination: diagnostics, modelling and risk management.",
-    subs:[ ["Métaux &amp; ETM","Metals &amp; trace elements"], ["Polluants organiques","Organic pollutants"],
-           ["Radionucléides","Radionuclides"], ["Évaluation des risques","Risk assessment"] ],
-    neighbors:["metals","remediation","mining-soils","technosols"] },
-  { id:"remediation", zone:"z8",
-    fr:"Dépollution &amp; remédiation", en:"Remediation",
-    defFr:"Techniques de traitement in situ ou ex situ : physico-chimique, biologique, phyto-/myco-remédiation.",
-    defEn:"In-situ or ex-situ treatment techniques: physico-chemical, biological, phyto- and myco-remediation.",
-    subs:[ ["Phytoremédiation","Phytoremediation"], ["Bioremédiation","Bioremediation"],
-           ["Lavage / stabilisation","Washing / stabilisation"] ],
-    neighbors:["contamination","metals","mining-soils","technosols","conservation"] },
-  { id:"sealing", zone:"z8",
-    fr:"Artificialisation &amp; imperméabilisation", en:"Soil sealing &amp; artificialisation",
-    defFr:"Scellement des sols par bâtiments et infrastructures — perte de fonctions, enjeu « zéro artificialisation nette ».",
-    defEn:"Soil sealing by buildings and infrastructure — loss of soil functions, at the heart of \"net zero soil sealing\".",
-    subs:[ ["ZAN (« zéro artificialisation nette »)","Net-zero soil sealing"], ["Imperméabilisation","Sealing"],
-           ["Pertes de services","Loss of services"] ],
-    neighbors:["urban-soils","law","ecosystem-services","degradation"] },
-  { id:"geotech", zone:"z8",
-    fr:"Géotechnique &amp; génie civil", en:"Geotechnics &amp; civil engineering",
-    defFr:"Mécanique des sols au sens ingénieur : fondations, terrassements, stabilité des pentes, ouvrages en terre.",
-    defEn:"Soil mechanics in the engineering sense: foundations, earthworks, slope stability, earthworks design.",
-    subs:[ ["Fondations","Foundations"], ["Terrassements","Earthworks"],
-           ["Stabilité des pentes","Slope stability"], ["Barrages &amp; digues","Dams &amp; dykes"] ],
-    neighbors:["mechanics","shrink-swell","urban-soils","sealing"] },
-  { id:"forensics", zone:"z8",
-    fr:"Criminalistique des sols", en:"Soil forensics",
-    defFr:"Identification et traçabilité de traces de sol dans les enquêtes criminelles — provenance et comparaison d'échantillons.",
-    defEn:"Identification and tracing of soil traces in criminal investigations — provenance and sample comparison.",
-    subs:[ ["Comparaison d'échantillons","Sample comparison"], ["Provenance","Provenance"],
-           ["Signatures géochimiques","Geochemical fingerprints"] ],
-    neighbors:["mineralogy","metals","archaeology"] },
-
-  /* ====================== Z9 — ENVIRONNEMENT & CLIMAT ====================== */
-  { id:"wetlands", zone:"z9",
-    fr:"Sols hydromorphes &amp; zones humides", en:"Wetland &amp; hydric soils",
-    defFr:"Sols saturés : tourbe, gley, pseudogley ; processus anaérobies et stockage massif de C.",
-    defEn:"Saturated soils: peat, gley, pseudogley; anaerobic processes and massive C storage.",
-    subs:[ ["Tourbières","Peatlands"], ["Gley &amp; pseudogley","Gley &amp; pseudogley"],
-           ["Hydromorphie","Hydromorphy"] ],
-    neighbors:["redox","aeration","carbon-climate","hydrology","ecosystem-services"] },
-  { id:"alluvial", zone:"z9",
-    fr:"Sols alluvionnaires &amp; fluviatiles", en:"Alluvial &amp; fluvial soils",
-    defFr:"Sols de plaines alluviales et de ripisylves — dépôts stratifiés, inondabilité, stockage de C.",
-    defEn:"Soils of alluvial plains and riparian forests — stratified deposits, flood dynamics, C storage.",
-    subs:[ ["Ripisylves","Riparian forests"], ["Alluvions","Alluvium"], ["Zones d'expansion de crue","Flood expansion zones"] ],
-    neighbors:["wetlands","hydrology","pedogenic-processes"] },
-  { id:"subaqueous", zone:"z9",
-    fr:"Sols submergés &amp; marins", en:"Subaqueous &amp; marine soils",
-    defFr:"Sols sous la nappe, lagunes, vasières, prés salés — une frontière jeune de la pédologie.",
-    defEn:"Soils beneath the water table, lagoons, tidal flats and salt marshes — a young frontier of pedology.",
-    subs:[ ["Sols subaquatiques","Subaqueous soils"], ["Prés salés","Salt marshes"], ["Vasières","Tidal flats"] ],
-    neighbors:["wetlands","salinity","pedogenic-processes"] },
-  { id:"cryosols", zone:"z9",
-    fr:"Cryosols &amp; pergélisol", en:"Cryosols &amp; permafrost",
-    defFr:"Sols gelés en permanence — stocks énormes de C et de CH₄, hyper-sensibles au réchauffement.",
-    defEn:"Permanently frozen soils — huge stocks of C and CH₄, highly sensitive to warming.",
-    subs:[ ["Permafrost","Permafrost"], ["Couche active","Active layer"], ["Dégel","Thaw"] ],
-    neighbors:["thermal","carbon-climate","climate-feedback"] },
-  { id:"salinity", zone:"z9",
-    fr:"Salinité &amp; sodicité", en:"Soil salinity &amp; sodicity",
-    defFr:"Accumulation de sels solubles et de sodium échangeable — facteur mondial majeur de dégradation, notamment sous irrigation.",
-    defEn:"Accumulation of soluble salts and exchangeable sodium — a leading global degradation driver, especially under irrigation.",
-    subs:[ ["Salinisation primaire","Primary salinisation"], ["Salinisation secondaire","Secondary salinisation"],
-           ["Sols sodiques","Sodic soils"] ],
-    neighbors:["irrigation","degradation","remote-sensing","chemistry"] },
-  { id:"erosion", zone:"z9",
-    fr:"Érosion &amp; désertification", en:"Erosion &amp; desertification",
-    defFr:"Érosion hydrique, éolienne, gravitaire ; désertification dans les zones arides et semi-arides.",
-    defEn:"Water, wind and gravity erosion; desertification in arid and semi-arid regions.",
-    subs:[ ["Érosion hydrique","Water erosion"], ["Érosion éolienne","Wind erosion"],
-           ["Glissements de terrain","Landslides"], ["Désertification","Desertification"] ],
-    neighbors:["degradation","conservation","soil-evolution","tillage"] },
-  { id:"degradation", zone:"z9",
-    fr:"Dégradation des sols", en:"Soil degradation",
-    defFr:"Pertes physiques, chimiques et biologiques de qualité des sols — érosion, tassement, pertes de MO, contamination.",
-    defEn:"Physical, chemical and biological loss of soil quality — erosion, compaction, SOM loss, contamination.",
-    subs:[ ["Tassement","Compaction"], ["Perte de MO","SOM loss"], ["Contamination","Contamination"],
-           ["Battance","Crusting"] ],
-    neighbors:["erosion","sealing","contamination","health","conservation"] },
-  { id:"carbon-climate", zone:"z9",
-    fr:"Séquestration du C &amp; climat", en:"Soil carbon &amp; climate",
-    defFr:"Stockage et émissions de carbone par les sols — initiative 4‰, stratégies de séquestration, rétroactions climatiques.",
-    defEn:"Soil carbon storage and emissions — the 4 per 1000 initiative, sequestration strategies, climate feedbacks.",
-    subs:[ ["Initiative 4‰","4 per 1000 initiative"], ["Stocks de C","Soil C stocks"],
-           ["Émissions GES","GHG emissions"], ["Rétroactions climatiques","Climate feedbacks"] ],
-    neighbors:["som","biogeochem","cryosols","wetlands","climate-feedback"] },
-  { id:"critical-zone", zone:"z9",
-    fr:"Zone critique", en:"Critical zone science",
-    defFr:"« Peau vivante » de la Terre, du sommet des canopées à la roche-mère fracturée : intégration de la pédologie, géochimie, hydrologie et écologie.",
-    defEn:"Earth's \"living skin\", from canopy to weathered bedrock — integrating pedology, geochemistry, hydrology and ecology.",
-    subs:[ ["CZO / Observatoires","Critical Zone Observatories"], ["Saprolite","Saprolite"],
-           ["Bedrock fracturé","Weathered bedrock"] ],
-    neighbors:["weathering","soil-evolution","biogeochem","hydrology","ecosystem-services"] },
-  { id:"ecosystem-services", zone:"z9",
-    fr:"Services écosystémiques", en:"Ecosystem services",
-    defFr:"Services de régulation, approvisionnement, culturels et de support rendus par les sols.",
-    defEn:"Regulating, provisioning, cultural and supporting services delivered by soils.",
-    subs:[ ["Régulation du climat","Climate regulation"], ["Épuration de l'eau","Water purification"],
-           ["Support de biodiversité","Biodiversity support"], ["Patrimoine","Cultural heritage"] ],
-    neighbors:["biodiversity","biogeochem","carbon-climate","health","soil-security"] },
-  { id:"climate-feedback", zone:"z9",
-    fr:"Rétroactions sol-climat", en:"Soil-climate feedbacks",
-    defFr:"Couplages entre sol et climat : albédo, humidité, vapeur d'eau, émissions de GES — cible de la modélisation du système Terre.",
-    defEn:"Soil-climate coupling: albedo, moisture, water vapour and GHG fluxes — a central target of Earth-system modelling.",
-    subs:[ ["Albédo","Albedo"], ["Humidité des sols","Soil moisture"], ["Vapeur d'eau","Water vapour"] ],
-    neighbors:["thermal","spac","carbon-climate","cryosols"] },
-
-  /* ====================== Z10 — SOCIÉTÉ & FRONTIÈRES ====================== */
-  { id:"history", zone:"z10",
-    fr:"Histoire &amp; épistémologie", en:"History &amp; epistemology",
-    defFr:"Des pionniers (Dokuchaev, Müller, Jenny, Duchaufour) à la science contemporaine — comment la discipline s'est construite.",
-    defEn:"From the pioneers (Dokuchaev, Müller, Jenny, Duchaufour) to contemporary science — how the discipline was built.",
-    subs:[ ["Dokuchaev","Dokuchaev"], ["École française","French school"],
-           ["Épistémologie","Epistemology"] ],
-    neighbors:["education","ethnopedology","classification"] },
-  { id:"education", zone:"z10",
-    fr:"Enseignement &amp; médiation", en:"Education &amp; outreach",
-    defFr:"Pédagogie des sols, vulgarisation, médiation scientifique, citoyenneté des sols.",
-    defEn:"Pedagogy, outreach, science communication and soil citizenship.",
-    subs:[ ["Pédagogie","Pedagogy"], ["Vulgarisation","Science communication"],
-           ["Sciences participatives","Citizen science"] ],
-    neighbors:["history","health","law","soil-security"] },
-  { id:"ethnopedology", zone:"z10",
-    fr:"Ethnopédologie", en:"Ethnopedology",
-    defFr:"Comment différentes cultures décrivent, classent et gèrent leurs sols — savoirs vernaculaires et locaux.",
-    defEn:"How different cultures describe, classify and manage their soils — vernacular and local knowledge.",
-    subs:[ ["Savoirs locaux","Local knowledge"], ["Classifications vernaculaires","Vernacular classifications"],
-           ["Gestion traditionnelle","Traditional management"] ],
-    neighbors:["classification","history","soil-security","education"] },
-  { id:"law", zone:"z10",
-    fr:"Droit &amp; gouvernance des sols", en:"Soil law &amp; governance",
-    defFr:"Statut juridique des sols, politiques publiques, directives européennes, instruments de protection.",
-    defEn:"Legal status, public policy, European directives and soil-protection instruments.",
-    subs:[ ["Droit français des sols","French soil law"], ["Directive UE","EU soil directive"],
-           ["ZAN","Net-zero soil sealing"], ["Sites &amp; sols pollués","Contaminated-site law"] ],
-    neighbors:["sealing","conservation","soil-security","education"] },
-  { id:"soil-security", zone:"z10",
-    fr:"Sécurité des sols", en:"Soil security",
-    defFr:"Cadre intégrateur (Capability, Condition, Capital, Connectivity, Codification) pour relier sol, alimentation, climat, biodiversité.",
-    defEn:"An integrative framework (Capability, Condition, Capital, Connectivity, Codification) linking soil to food, climate and biodiversity.",
-    subs:[ ["Capability / Condition","Capability / Condition"], ["Capital / Connectivity","Capital / Connectivity"],
-           ["Codification","Codification"], ["ODD / SDGs","Sustainable Development Goals"] ],
-    neighbors:["law","health","ecosystem-services","one-health","carbon-climate"] },
-  { id:"health", zone:"z10",
-    fr:"Santé des sols", en:"Soil health",
-    defFr:"Capacité durable d'un sol à fonctionner — cadre opérationnel mêlant indicateurs physiques, chimiques, biologiques.",
-    defEn:"A soil's sustained capacity to function — an operational framework mixing physical, chemical and biological indicators.",
-    subs:[ ["Indicateurs","Indicators"], ["Bio-indicateurs","Bio-indicators"],
-           ["Scoring","Scoring methods"], ["Loi UE Soil Monitoring","EU Soil Monitoring Law"] ],
-    neighbors:["biodiversity","som","soil-security","one-health","fertility"] },
-  { id:"one-health", zone:"z10",
-    fr:"One Health / Planetary Health", en:"One Health / Planetary Health",
-    defFr:"Reconnaître la santé des sols comme maillon des santés humaine, animale, végétale et environnementale.",
-    defEn:"Placing soil health as a core link in human, animal, plant and environmental health.",
-    subs:[ ["Santé humaine","Human health"], ["Résistances antibiotiques","Antimicrobial resistance"],
-           ["Pathogènes","Pathogens"] ],
-    neighbors:["health","biodiversity","contamination","soil-security"] },
-  { id:"archaeology", zone:"z10",
-    fr:"Géoarchéologie &amp; archéopédologie", en:"Geoarchaeology &amp; archaeopedology",
-    defFr:"Le sol comme archive : paléosols, anthroposols, stratigraphie, diagnostic archéologique.",
-    defEn:"Soil as archive: paleosols, anthrosols, stratigraphy, archaeological diagnostics.",
-    subs:[ ["Paléosols","Paleosols"], ["Sols anthropiques anciens","Ancient anthrosols"],
-           ["Géoarchéologie","Geoarchaeology"] ],
-    neighbors:["paleopedology","anthropogenesis","micromorphology","forensics"] },
-  { id:"extraterrestrial", zone:"z10",
-    fr:"Pédologie extra-terrestre", en:"Extraterrestrial pedology",
-    defFr:"Régolithes lunaires et martiens, astéroïdes, Titan… Qu'est-ce qu'un « sol » hors-Terre ? 🌕 🪐",
-    defEn:"Lunar and Martian regoliths, asteroids, Titan… What is a \"soil\" off Earth? 🌕 🪐",
-    subs:[ ["Régolithe lunaire","Lunar regolith"], ["Sols martiens","Martian soils"],
-           ["Astéroïdes &amp; comètes","Asteroids &amp; comets"] ],
-    neighbors:["mineralogy","pedogenic-processes","weathering"] },
-];
-
-/* -----------------------------------------------------------------------------
-   BRIDGE THEMES — cross-cutting concepts that light up subsets of nodes
-   ---------------------------------------------------------------------------*/
-const BRIDGES = [
-  { id:"carbon-climate-theme", fr:"Carbone du sol &amp; climat", en:"Soil carbon &amp; climate",
-    descFr:"Du stockage moléculaire de la MO aux rétroactions globales — tous les nœuds où le C du sol compte.",
-    descEn:"From molecular SOM storage to global feedbacks — every node where soil C matters.",
-    nodes:["som","biogeochem","carbon-climate","cryosols","wetlands","agroforestry","cover-crops","grasslands","climate-feedback","conservation","forest-soils"] },
-  { id:"spac-theme", fr:"Continuum sol-plante-eau", en:"Soil-plant-water continuum",
-    descFr:"L'eau du sol jusqu'à l'atmosphère, via les racines.",
-    descEn:"Water from soil to atmosphere, through roots.",
-    nodes:["hydrology","retention","spac","plant-nutrition","roots","irrigation","edaphology","rhizosphere"] },
-  { id:"critical-zone-theme", fr:"Zone critique", en:"Critical Zone science",
-    descFr:"Peau vivante de la Terre : altération, eaux, vivants, sol.",
-    descEn:"Earth's living skin: weathering, waters, biota, soil.",
-    nodes:["factors","weathering","pedogenic-processes","soil-evolution","hydrology","biogeochem","critical-zone","ecosystem-services"] },
-  { id:"soil-security-theme", fr:"Sécurité des sols", en:"Soil Security",
-    descFr:"Cadre intégrateur : 5 C reliant sol, alimentation et climat.",
-    descEn:"Integrative 5C framework linking soil, food and climate.",
-    nodes:["soil-security","law","health","education","ecosystem-services","dsm","carbon-climate","one-health"] },
-  { id:"dsm-theme", fr:"Évaluation numérique des sols", en:"Digital soil assessment &amp; pedometrics",
-    descFr:"Modèles, données, télédétection, apprentissage machine.",
-    descEn:"Models, data, remote sensing, machine learning.",
-    nodes:["dsm","pedometrics","remote-sensing","modeling","cartography","survey","metrology"] },
-  { id:"governance-theme", fr:"Gouvernance &amp; politiques des sols", en:"Soil governance &amp; policy",
-    descFr:"Droit, politiques, suivi et protection des sols.",
-    descEn:"Law, policy, monitoring and protection of soils.",
-    nodes:["law","soil-security","health","sealing","conservation","education","one-health"] },
-  { id:"ethnopedology-theme", fr:"Savoirs locaux &amp; ethnopédologie", en:"Local knowledge &amp; ethnopedology",
-    descFr:"Comment les cultures perçoivent, nomment et gèrent leurs sols.",
-    descEn:"How cultures perceive, name and manage their soils.",
-    nodes:["ethnopedology","classification","history","education","agroforestry","soil-security"] },
-  { id:"risk-theme", fr:"Risques &amp; contaminations", en:"Risk &amp; contamination",
-    descFr:"Des polluants aux aléas géotechniques et pathogènes.",
-    descEn:"From pollutants to geotechnical hazards and pathogens.",
-    nodes:["contamination","metals","remediation","mining-soils","technosols","shrink-swell","geotech","one-health","forensics"] },
-];
-
-/* -----------------------------------------------------------------------------
-   Placeholders — a couple of extra "synthetic" nodes referenced as neighbors
-   but not rendered as chips (keeps links working without visual clutter)
-   ---------------------------------------------------------------------------*/
-const PLACEHOLDERS = {
-  "acid-soils": { fr:"Sols acides", en:"Acid soils" },
-  "mapping-dsm": { fr:"Cartographie numérique", en:"Digital soil mapping" },
-  "modeling": { fr:"Modélisation des sols", en:"Soil process modeling" },
-  "metrology": { fr:"Métrologie &amp; analyses", en:"Soil analytics &amp; metrology" },
+/* ═════ i18n string table ═════ */
+const I18N = {
+  fr: {
+    title:           "La carte de la science des sols",
+    plateTag:        "Planche I",
+    draftTag:        "Avril 2026 · Brouillon v2",
+    headingMain:     "La carte de la science des sols",
+    headingSub:      "Dix domaines, quatre-vingt-cinq disciplines — de la pédogenèse et la minéralogie à la gouvernance et aux sciences de frontière, cartographiés en une seule planche typographique.",
+    statDomains:     "Domaines",
+    statDisciplines: "Disciplines",
+    statLangs:       "Langues",
+    blurb:           "Cliquez une pastille pour lire sa <em>définition</em>, ses sous-branches et ses disciplines proches. La planche se lit selon deux axes — des <em>origines</em> en haut vers le <em>contexte</em> en bas, des sciences <em>fondamentales</em> à gauche vers les <em>pratiques appliquées</em> à droite.",
+    ctrlLang:        "Langue",
+    axisTop:         "<b>Origines</b> · Genèse, morphologie, cartographie",
+    axisBottom:      "<b>Contexte</b> · Environnement, climat, société",
+    axisLeft:        "<b>Fondamentales</b> · Physique · Chimie · Biologie",
+    axisRight:       "<b>Appliquées</b> · Plantes · Gestion · Anthropisés",
+    legendTitle:     "Légende · <b>Les dix domaines</b>",
+    notesTitle:      "Notes · <b>Lire la planche</b>",
+    notes1:          "La planche se lit en quatre bandes. <em>Origines</em> en haut — comment les sols se forment et comment on les décrit. Les <em>sciences fondamentales</em> au milieu — physique, chimie, biologie. Les <em>pratiques appliquées</em> en dessous — plantes, gestion, sols anthropisés. La ligne <em>contexte</em> ancre le tout dans l'environnement, le climat et la société.",
+    notes2:          "Taxonomie d'après les Divisions &amp; Commissions de l'IUSS, la SSSA, EGU Soil System Sciences, l'AFES, FAO / WRB, <em>Encyclopedia of Soil Science</em> (R. Lal éd.), Brady &amp; Weil. Inspirée des planches <em>Domain of Science</em> de Dominic Walliman.",
+    panelSubs:       "Sous-branches",
+    panelNeighbors:  "Disciplines proches",
+    todoBadge:       "à faire",
+    printRight:      "T. Fungenzi · 2026",
+  },
+  en: {
+    title:           "The Map of Soil Science",
+    plateTag:        "Plate I",
+    draftTag:        "April 2026 · Draft v2",
+    headingMain:     "The Map of Soil Science",
+    headingSub:      "Ten domains, eighty-five disciplines — from pedogenesis and mineralogy to governance and frontier sciences, mapped as a single typographic plate.",
+    statDomains:     "Domains",
+    statDisciplines: "Disciplines",
+    statLangs:       "Languages",
+    blurb:           "Click any discipline pill for its <em>definition</em>, sub-branches and related fields. The plate reads along two axes — from <em>origins</em> at the top to <em>context</em> at the bottom, from the <em>fundamental sciences</em> on the left to <em>applied practice</em> on the right.",
+    ctrlLang:        "Lang",
+    axisTop:         "<b>Origins</b> · Genesis, morphology, mapping",
+    axisBottom:      "<b>Context</b> · Environment, climate, society",
+    axisLeft:        "<b>Fundamental</b> · Physics · Chemistry · Biology",
+    axisRight:       "<b>Applied</b> · Plants · Management · Human-made",
+    legendTitle:     "Legend · <b>The ten domains</b>",
+    notesTitle:      "Notes · <b>Reading the atlas</b>",
+    notes1:          "The plate reads in four bands. <em>Origins</em> at the top — how soils form and how we describe them. The <em>fundamental sciences</em> in the middle — physics, chemistry, biology. <em>Applied practice</em> below — plants, management, human-made soils. The <em>context</em> row grounds it all in environment, climate, and society.",
+    notes2:          "Taxonomy after IUSS Divisions &amp; Commissions, SSSA, EGU Soil System Sciences, AFES, FAO / WRB, <em>Encyclopedia of Soil Science</em> (R. Lal ed.), Brady &amp; Weil. Inspired by Dominic Walliman's <em>Domain of Science</em> plates.",
+    panelSubs:       "Sub-branches",
+    panelNeighbors:  "Related fields",
+    todoBadge:       "to do",
+    printRight:      "T. Fungenzi · 2026",
+  }
 };
 
-/* -----------------------------------------------------------------------------
-   RENDER
-   ---------------------------------------------------------------------------*/
-const stage = document.getElementById('stage');
-const linksSvg = document.getElementById('links');
+function currentLang() {
+  return document.body.classList.contains('lang-en') ? 'en' : 'fr';
+}
+
+function applyI18N() {
+  const lang = currentLang();
+  const t = I18N[lang];
+  document.documentElement.lang = lang;
+  document.title = t.title;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (t[key] !== undefined) el.textContent = t[key];
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const key = el.getAttribute('data-i18n-html');
+    if (t[key] !== undefined) el.innerHTML = t[key];
+  });
+}
+
+/* ═════ Render the plate ═════ */
+ZONES.forEach((z, i) => z.num = String(i+1).padStart(2, '0'));
+
+const plateInner = document.getElementById('plate-inner');
 
 function render() {
+  applyI18N();
+  renderZonesAndNodes();
+  renderLegend();
+}
+
+function renderZonesAndNodes() {
   ZONES.forEach(z => {
     const el = document.createElement('section');
-    el.className = 'zone';
+    el.className = 'zone zone-color-' + z.id;
     el.dataset.id = z.id;
-    el.style.setProperty('--zone-color', z.color);
-    const [x,y,w,h] = z.bbox;
-    el.style.left = (x*100)+'%';
-    el.style.top = (y*100)+'%';
-    el.style.width = (w*100)+'%';
-    el.style.height = (h*100)+'%';
+    const [x, y, w, h] = z.bbox;
+    el.style.left   = (x * 100) + '%';
+    el.style.top    = (y * 100) + '%';
+    el.style.width  = (w * 100) + '%';
+    el.style.height = (h * 100) + '%';
     el.innerHTML = `
-      <h2><span class="fr">${z.fr}</span><span class="en">${z.en}</span></h2>
+      <div class="head">
+        <div class="medallion">${z.num}</div>
+        <div class="hmeta">
+          <div class="eyebrow">Zone ${z.num}</div>
+          <h2>
+            <span class="fr">${z.fr}</span><span class="en">${z.en}</span>
+          </h2>
+        </div>
+      </div>
       <div class="nodes" data-zone="${z.id}"></div>
     `;
-    stage.appendChild(el);
+    plateInner.appendChild(el);
   });
 
   NODES.forEach(n => {
-    const host = stage.querySelector(`.nodes[data-zone="${n.zone}"]`);
+    const host = plateInner.querySelector(`.nodes[data-zone="${n.zone}"]`);
     if (!host) return;
     const el = document.createElement('button');
     el.className = 'node';
@@ -985,161 +714,103 @@ function render() {
     el.addEventListener('click', () => openNode(n.id));
     host.appendChild(el);
   });
+}
 
-  // Populate bridge selector
-  const sel = document.getElementById('bridge-select');
-  BRIDGES.forEach(b => {
-    const o = document.createElement('option');
-    o.value = b.id;
-    o.textContent = b.fr.replace(/&amp;/g,'&') + ' · ' + b.en.replace(/&amp;/g,'&');
-    sel.appendChild(o);
+function renderLegend() {
+  const lang = currentLang();
+  const leg = document.getElementById('legend');
+  leg.innerHTML = '';
+  ZONES.forEach(z => {
+    const el = document.createElement('div');
+    el.className = 'lg zone-color-' + z.id;
+    const name = (lang === 'en' ? z.en : z.fr).replace(/&amp;/g, '&');
+    el.innerHTML = `
+      <span class="num">${z.num}</span>
+      <span class="sw"></span>
+      <span class="lb">${name}</span>`;
+    leg.appendChild(el);
   });
-
-  drawLinks();
-  window.addEventListener('resize', drawLinks);
 }
 
-function nodeCenter(nodeId) {
-  const el = stage.querySelector(`.node[data-id="${nodeId}"]`);
-  if (!el) return null;
-  const r = el.getBoundingClientRect();
-  const s = stage.getBoundingClientRect();
-  const cx = (r.left - s.left + r.width/2) / s.width * 1760;
-  const cy = (r.top  - s.top  + r.height/2) / s.height * 990;
-  return {cx, cy};
-}
+/* ═════ Controls ═════ */
+let activeNodeId = null;
 
-function drawLinks() {
-  linksSvg.innerHTML = '';
-  const drawn = new Set();
-  NODES.forEach(n => {
-    (n.neighbors||[]).forEach(m => {
-      if (!NODES.find(x=>x.id===m)) return; // skip placeholders
-      const key = [n.id,m].sort().join('|');
-      if (drawn.has(key)) return;
-      drawn.add(key);
-      const an = NODES.find(x=>x.id===n.id), bn = NODES.find(x=>x.id===m);
-      if (!an || !bn) return;
-      if (an.zone === bn.zone) return;
-      const a = nodeCenter(n.id), b = nodeCenter(m);
-      if (!a || !b) return;
-      const path = document.createElementNS('http://www.w3.org/2000/svg','path');
-      const mx = (a.cx+b.cx)/2;
-      const my = (a.cy+b.cy)/2 - Math.min(80, Math.abs(a.cx-b.cx)/6);
-      path.setAttribute('d', `M ${a.cx} ${a.cy} Q ${mx} ${my} ${b.cx} ${b.cy}`);
-      path.dataset.a = n.id;
-      path.dataset.b = m;
-      linksSvg.appendChild(path);
-    });
-  });
-  // bridge lines are drawn on demand in setBridge()
-}
-
-/* -----------------------------------------------------------------------------
-   INTERACTIONS
-   ---------------------------------------------------------------------------*/
 function setLang(l) {
-  document.body.classList.remove('lang-fr','lang-en','lang-both');
-  document.body.classList.add('lang-'+l);
-  ['fr','en','both'].forEach(k => {
-    document.getElementById('btn-'+k).classList.toggle('active', k===l);
+  document.body.classList.remove('lang-fr', 'lang-en');
+  document.body.classList.add('lang-' + l);
+  ['fr', 'en'].forEach(k => {
+    document.getElementById('btn-' + k).classList.toggle('active', k === l);
   });
-  requestAnimationFrame(drawLinks);
+  applyI18N();
+  renderLegend();
+  if (activeNodeId) openNode(activeNodeId);
 }
 
-function toggleLinks() {
-  document.body.classList.toggle('show-links');
-  document.getElementById('btn-links').classList.toggle('active', document.body.classList.contains('show-links'));
-}
-
-function setBridge(id) {
-  // Clear previous
-  document.body.classList.remove('bridge-active');
-  document.querySelectorAll('.node').forEach(el => el.classList.remove('bridge-hit'));
-  linksSvg.querySelectorAll('path.bridge-line').forEach(p => p.remove());
-  document.getElementById('bridge-select').value = id || '';
-
-  if (!id) return;
-  const b = BRIDGES.find(x=>x.id===id);
-  if (!b) return;
-  document.body.classList.add('bridge-active');
-  document.getElementById('bridge-name').innerHTML =
-    document.body.classList.contains('lang-en') ? b.en : b.fr;
-  document.getElementById('bridge-desc').innerHTML =
-    document.body.classList.contains('lang-en') ? b.descEn : b.descFr;
-
-  const hit = new Set(b.nodes);
-  document.querySelectorAll('.node').forEach(el => {
-    if (hit.has(el.dataset.id)) el.classList.add('bridge-hit');
-  });
-  // draw curvy bridge links connecting all hit pairs
-  const ids = b.nodes.filter(i => NODES.find(n=>n.id===i));
-  for (let i=0;i<ids.length;i++){
-    for (let j=i+1;j<ids.length;j++){
-      const a = nodeCenter(ids[i]), c = nodeCenter(ids[j]);
-      if (!a || !c) continue;
-      const path = document.createElementNS('http://www.w3.org/2000/svg','path');
-      const mx = (a.cx+c.cx)/2;
-      const my = (a.cy+c.cy)/2 - Math.min(120, Math.abs(a.cx-c.cx)/4);
-      path.setAttribute('d', `M ${a.cx} ${a.cy} Q ${mx} ${my} ${c.cx} ${c.cy}`);
-      path.classList.add('bridge-line');
-      linksSvg.appendChild(path);
-    }
-  }
-}
+/* ═════ Node detail panel ═════ */
+function stripTags(s) { return (s || '').replace(/<[^>]+>/g, ''); }
 
 function openNode(id) {
-  const n = NODES.find(x => x.id === id);
-  if (!n) return;
+  const n = NODES.find(x => x.id === id); if (!n) return;
+  activeNodeId = id;
+  const lang = currentLang();
+  const t = I18N[lang];
   const z = ZONES.find(x => x.id === n.zone);
 
-  document.getElementById('panel-zone').innerHTML =
-    (z.fr+' · '+z.en).replace(/&amp;/g,'&');
-  document.getElementById('panel-title-fr').innerHTML = n.fr;
-  document.getElementById('panel-title-en').innerHTML = n.en;
-  document.getElementById('panel-def-fr').innerHTML = n.defFr;
-  document.getElementById('panel-def-en').innerHTML = n.defEn;
+  const chip = document.getElementById('panel-zone-chip');
+  chip.className = 'zone-chip zone-color-' + z.id;
+  document.getElementById('panel-zone-num').textContent = z.num;
+  document.getElementById('panel-zone').textContent =
+    stripTags((lang === 'en' ? z.en : z.fr).replace(/&amp;/g, '&'));
+  document.getElementById('panel-title').innerHTML = lang === 'en' ? n.en : n.fr;
+  document.getElementById('panel-def').innerHTML   = lang === 'en' ? n.defEn : n.defFr;
 
-  const ul = document.getElementById('panel-subs');
-  ul.innerHTML = '';
-  (n.subs||[]).forEach(pair => {
+  const ul = document.getElementById('panel-subs'); ul.innerHTML = '';
+  (n.subs || []).forEach(pair => {
     const li = document.createElement('li');
-    li.innerHTML = `${pair[0]} <em>· ${pair[1]}</em>`;
+    const text = (lang === 'en' ? pair[1] : pair[0]).replace(/&amp;/g, '&');
+    li.innerHTML = `<span>${text}</span>`;
     ul.appendChild(li);
   });
 
-  const neighborsWrap = document.getElementById('panel-neighbors');
-  neighborsWrap.innerHTML = '';
-  (n.neighbors||[]).forEach(m => {
-    const nn = NODES.find(x => x.id === m) || PLACEHOLDERS[m];
+  const nb = document.getElementById('panel-neighbors'); nb.innerHTML = '';
+  (n.neighbors || []).forEach(m => {
+    const nn = NODES.find(x => x.id === m) || (typeof PLACEHOLDERS !== 'undefined' ? PLACEHOLDERS[m] : null);
     if (!nn) return;
+    const zz = nn.zone ? ZONES.find(x => x.id === nn.zone) : null;
     const a = document.createElement('a');
-    a.innerHTML = `${nn.fr} · ${nn.en}`.replace(/<[^>]+>/g,'');
+    const zc = zz ? `var(--z${zz.id.slice(1)})` : 'var(--soil-30)';
+    a.style.setProperty('--ncol', zc);
+    a.textContent = stripTags((lang === 'en' ? nn.en : nn.fr).replace(/&amp;/g, '&'));
     if (NODES.find(x => x.id === m)) {
-      a.addEventListener('click', (e) => { e.preventDefault(); openNode(m); });
+      a.addEventListener('click', e => { e.preventDefault(); openNode(m); });
     } else {
-      a.style.opacity = .5; a.style.cursor = 'default';
-      a.title = 'Concept connexe (hors carte) · Related concept (not on map)';
+      a.classList.add('ph-only');
+      a.setAttribute('data-todo', t.todoBadge);
     }
-    neighborsWrap.appendChild(a);
+    nb.appendChild(a);
   });
 
   document.querySelectorAll('.node').forEach(el => {
     el.classList.toggle('highlight', el.dataset.id === id);
-    el.classList.toggle('dim', el.dataset.id !== id && !(n.neighbors||[]).includes(el.dataset.id));
+    el.classList.toggle('dim',
+      el.dataset.id !== id && !(n.neighbors || []).includes(el.dataset.id));
   });
+  document.body.classList.add('panel-open');
   document.getElementById('panel').classList.add('open');
+  document.getElementById('panel').setAttribute('aria-hidden', 'false');
 }
 
 function closePanel() {
+  activeNodeId = null;
+  document.body.classList.remove('panel-open');
   document.getElementById('panel').classList.remove('open');
-  document.querySelectorAll('.node').forEach(el => {
-    el.classList.remove('highlight','dim');
-  });
+  document.getElementById('panel').setAttribute('aria-hidden', 'true');
+  document.querySelectorAll('.node').forEach(el =>
+    el.classList.remove('highlight', 'dim'));
 }
 
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') { closePanel(); setBridge(''); }
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closePanel();
 });
 
 render();

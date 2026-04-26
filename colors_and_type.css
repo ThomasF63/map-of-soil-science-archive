@@ -1,0 +1,196 @@
+/* ═══════════════════════════════════════════════════════════════
+   EKODAMA — COLORS & TYPE
+   Single source of truth for color + typography tokens.
+   Import this once from any page:
+     <link rel="stylesheet" href="colors_and_type.css">
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Figtree + Inconsolata — loaded from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800&family=Inconsolata:wght@400;500;700&display=swap');
+
+/* Inconsolata runs smaller on the body than PT Mono at the same px size.
+   Ship one adjusted family so every mono usage in the atlas — including
+   the many hard-coded px sizes — gets a uniform +8% bump without edits. */
+@font-face {
+  font-family: 'Inconsolata Adj';
+  src: local('Inconsolata'), local('Inconsolata-Regular');
+  font-weight: 400;
+  font-style: normal;
+  size-adjust: 108%;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inconsolata Adj';
+  src: local('Inconsolata'), local('Inconsolata-Medium');
+  font-weight: 500;
+  font-style: normal;
+  size-adjust: 108%;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inconsolata Adj';
+  src: local('Inconsolata'), local('Inconsolata-Bold');
+  font-weight: 700;
+  font-style: normal;
+  size-adjust: 108%;
+  font-display: swap;
+}
+
+:root {
+  /* ─── PRIMITIVE PALETTE ───────────────────────────────────────
+     Usage ratio 60 / 30 / 10:
+       60 %  Root + Soil       (surfaces, text)
+       30 %  Water + Stem      (accents)
+       10 %  Seed + Terracotta (highlights, alerts)
+     ─────────────────────────────────────────────────────────── */
+  --root:       #F7F5F0;   /* warm off-white page bg (never pure white) */
+  --soil:       #3B322C;   /* dark brown text / anchor (never pure black) */
+  --water:      #6B9AC4;   /* primary accent */
+  --stem:       #657D58;   /* secondary — nature / success */
+  --seed:       #E89B48;   /* highlight / warnings */
+  --terracotta: #C46B42;   /* danger / destructive */
+  --white:      #FFFFFF;
+  --amber:      var(--seed); /* legacy alias */
+
+  /* ─── TRANSPARENCIES ────────────────────────────────────────── */
+  --soil-05:  rgba(59, 50, 44, 0.05);
+  --soil-10:  rgba(59, 50, 44, 0.10);
+  --soil-15:  rgba(59, 50, 44, 0.15);
+  --soil-30:  rgba(59, 50, 44, 0.30);
+  --soil-60:  rgba(59, 50, 44, 0.60);
+  --water-10: rgba(107, 154, 196, 0.10);
+  --water-30: rgba(107, 154, 196, 0.30);
+  --stem-10:  rgba(101, 125, 88, 0.10);
+  --seed-10:  rgba(232, 155, 72, 0.10);
+  --terracotta-10: rgba(196, 107, 66, 0.10);
+
+  /* ─── DATA VIZ (6 series × light / base / dark) ─────────────── */
+  --dv1: #6B9AC4; --dv1-light: #D4E4F1; --dv1-dark: #3D6B94; /* Water */
+  --dv2: #657D58; --dv2-light: #D9E3D3; --dv2-dark: #3E5233; /* Stem */
+  --dv3: #E89B48; --dv3-light: #F5DFC0; --dv3-dark: #A86B25; /* Seed */
+  --dv4: #B5678A; --dv4-light: #EFDAE5; --dv4-dark: #7D3F5C; /* Berry */
+  --dv5: #C46B42; --dv5-light: #F2DDD3; --dv5-dark: #8A4528; /* Terracotta */
+  --dv6: #6C7A8A; --dv6-light: #DDE0E5; --dv6-dark: #424E5C; /* Slate */
+
+  /* ─── SEMANTIC COLOR ROLES ──────────────────────────────────── */
+  --color-page-bg:      var(--root);
+  --color-surface:      var(--white);
+  --color-surface-alt:  var(--root);
+  --color-text:         var(--soil);
+  --color-text-muted:   var(--soil-60);
+  --color-text-subtle:  var(--soil-30);
+  --color-border:       var(--soil-10);
+  --color-border-strong:var(--soil-15);
+
+  --color-primary:         var(--soil);
+  --color-accent:          var(--water);
+  --color-accent-nature:   var(--stem);
+  --color-accent-highlight:var(--seed);
+  --color-accent-danger:   var(--terracotta);
+
+  /* fg/bg aliases for quick use */
+  --fg1: var(--soil);
+  --fg2: var(--soil-60);
+  --fg3: var(--soil-30);
+  --bg1: var(--root);
+  --bg2: var(--white);
+  --bg-dark: var(--soil);
+
+  /* ─── TYPOGRAPHY ────────────────────────────────────────────── */
+  --font-sans:  'Figtree', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono:  'Inconsolata Adj', 'Inconsolata', ui-monospace, 'SF Mono', Menlo, monospace;
+  --font-display: var(--font-sans);
+
+  /* Type scale (heading sizes use clamp for responsive) */
+  --fs-display: clamp(3rem, 6vw, 5.5rem);  /* 48–88px — marketing hero */
+  --fs-h1:      clamp(2.25rem, 4vw, 3.5rem); /* 36–56px */
+  --fs-h2:      clamp(1.75rem, 3vw, 2.5rem); /* 28–40px */
+  --fs-h3:      1.5rem;                       /* 24 */
+  --fs-h4:      1.25rem;                      /* 20 */
+  --fs-lead:    1.125rem;                     /* 18 */
+  --fs-body:    1rem;                         /* 16 */
+  --fs-small:   0.875rem;                     /* 14 */
+  --fs-label:   0.75rem;                      /* 12 — use with mono + uppercase */
+
+  --lh-tight:  1.1;
+  --lh-snug:   1.25;
+  --lh-normal: 1.5;
+  --lh-loose:  1.65;
+
+  --ls-label:  0.08em;   /* uppercase labels */
+  --ls-caps:   0.04em;   /* lighter mono/caps */
+  --ls-logo:   -0.02em;
+
+  /* ─── DIMENSIONS — radii, elevation, spacing ─────────────── */
+  --radius-card:   24px;  /* cards, modals, panels */
+  --radius-input:  12px;  /* fields, smaller elements */
+  --radius-pill:   9999px;/* buttons, pills, badges */
+  --radius-sm:     8px;
+
+  --shadow-sm: 0 1px 2px rgba(59,50,44,0.05);
+  --shadow-md: 0 4px 12px rgba(59,50,44,0.08);   /* the house shadow */
+  --shadow-lg: 0 12px 32px rgba(59,50,44,0.10);
+
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px;
+  --space-4: 16px; --space-5: 24px; --space-6: 32px;
+  --space-7: 48px; --space-8: 64px; --space-9: 96px;
+
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 400ms;
+  --ease-out:   cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in-out:cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BASE / SEMANTIC ELEMENTS
+   Plain HTML tags pick up brand styling by default.
+   ═══════════════════════════════════════════════════════════════ */
+body {
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-normal);
+  color: var(--color-text);
+  background: var(--color-page-bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: var(--lh-tight);
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+  margin: 0;
+}
+h1 { font-size: var(--fs-h1); letter-spacing: -0.02em; }
+h2 { font-size: var(--fs-h2); letter-spacing: -0.015em; }
+h3 { font-size: var(--fs-h3); }
+h4 { font-size: var(--fs-h4); }
+
+p { line-height: var(--lh-loose); text-wrap: pretty; margin: 0; }
+a { color: var(--water); text-decoration: underline; text-underline-offset: 2px; text-decoration-thickness: 1px; transition: opacity var(--duration-fast) var(--ease-out); }
+a:hover { opacity: 0.7; }
+
+small { font-size: var(--fs-small); color: var(--color-text-muted); }
+strong, b { font-weight: 700; }
+
+/* Monospace labels / tags / data */
+.label, .tag, .metadata, .eyebrow, code, kbd {
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--color-text);
+}
+
+code { text-transform: none; letter-spacing: 0; background: var(--soil-05); padding: 0.1em 0.35em; border-radius: 4px; }
+
+.display { font-size: var(--fs-display); font-weight: 700; letter-spacing: -0.03em; line-height: var(--lh-tight); }
+.lead    { font-size: var(--fs-lead); font-weight: 500; line-height: var(--lh-snug); color: var(--color-text); }
+.muted   { color: var(--color-text-muted); }
+.subtle  { color: var(--color-text-subtle); }
+
+/* Selection uses Seed for a warm highlight */
+::selection { background: var(--seed); color: var(--soil); }

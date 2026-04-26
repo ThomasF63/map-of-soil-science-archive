@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "soil-map",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "47890", "--bind", "127.0.0.1"],
+      "port": 47890
+    }
+  ]
+}

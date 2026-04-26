@@ -1,6 +1,12 @@
 # Private brainstorm source — keep out of the public repo
 Gmail - Carte de la pédologie.pdf
 
+# Design handoff bundle (local reference only)
+.design_handoff/
+
+# Personal Claude Code permissions — keep out of the public repo
+.claude/settings.local.json
+
 # OS / editor cruft
 .DS_Store
 Thumbs.db

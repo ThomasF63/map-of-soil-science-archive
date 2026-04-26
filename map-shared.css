@@ -1,0 +1,50 @@
+/* ─── Ekodama-aligned zone palette for the soil-science map
+   Base is tokens from colors_and_type.css. Zone colors are tints derived
+   from Soil (deep brown), Seed/Terracotta (warm), Stem (greens), Slate (greys),
+   Water (teal/blue), Berry (social/frontier). All sit on Root (#F7F5F0). */
+:root {
+  --z1:  #5A3A22;  /* Pedogenesis — deep A-horizon soil */
+  --z2:  #8A6A42;  /* Morpho / classification / carto — B-horizon warm */
+  --z3:  #A86B25;  /* Physics — ochre (Seed dark) */
+  --z4:  #C46B42;  /* Chemistry — oxidised iron (Terracotta) */
+  --z5:  #657D58;  /* Biology — Stem */
+  --z6:  #3E5233;  /* Plants — Stem dark, leaf */
+  --z7:  #E89B48;  /* Management — field gold (Seed) */
+  --z8:  #6C7A8A;  /* Anthropogenic — Slate */
+  --z9:  #3D6B94;  /* Environment & climate — Water dark */
+  --z10: #7D3F5C;  /* Society & frontiers — Berry dark */
+
+  --z1-tint:  rgba(90,58,34,.08);
+  --z2-tint:  rgba(138,106,66,.08);
+  --z3-tint:  rgba(168,107,37,.08);
+  --z4-tint:  rgba(196,107,66,.08);
+  --z5-tint:  rgba(101,125,88,.10);
+  --z6-tint:  rgba(62,82,51,.10);
+  --z7-tint:  rgba(232,155,72,.10);
+  --z8-tint:  rgba(108,122,138,.10);
+  --z9-tint:  rgba(61,107,148,.10);
+  --z10-tint: rgba(125,63,92,.10);
+}
+.zone-color-z1  { --zc: var(--z1);  --zt: var(--z1-tint); }
+.zone-color-z2  { --zc: var(--z2);  --zt: var(--z2-tint); }
+.zone-color-z3  { --zc: var(--z3);  --zt: var(--z3-tint); }
+.zone-color-z4  { --zc: var(--z4);  --zt: var(--z4-tint); }
+.zone-color-z5  { --zc: var(--z5);  --zt: var(--z5-tint); }
+.zone-color-z6  { --zc: var(--z6);  --zt: var(--z6-tint); }
+.zone-color-z7  { --zc: var(--z7);  --zt: var(--z7-tint); }
+.zone-color-z8  { --zc: var(--z8);  --zt: var(--z8-tint); }
+.zone-color-z9  { --zc: var(--z9);  --zt: var(--z9-tint); }
+.zone-color-z10 { --zc: var(--z10); --zt: var(--z10-tint); }
+
+html, body { margin: 0; padding: 0; }
+body { background: var(--root); }
+
+.mono {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 11px;
+}
+
+/* reset button */
+button { font: inherit; color: inherit; background: none; border: none; padding: 0; cursor: pointer; }
