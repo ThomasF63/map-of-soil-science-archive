@@ -4,7 +4,7 @@
     {
       "name": "soil-map",
       "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "47890", "--bind", "127.0.0.1"],
+      "runtimeArgs": ["-c", "from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler; ThreadingHTTPServer(('127.0.0.1', 47890), SimpleHTTPRequestHandler).serve_forever()"],
       "port": 47890
     }
   ]

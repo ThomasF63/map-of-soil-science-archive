@@ -6,29 +6,29 @@
    Row 4 (bot): context (environment, society)
    ---------------------------------------------------------------------------*/
 const ZONES = [
-  { id:"z1",  color:"var(--c-z1)",  bbox:[0.02,0.05,0.48,0.18],
-    fr:"Pédogenèse &amp; genèse des sols", en:"Pedogenesis &amp; Soil Genesis" },
-  { id:"z2",  color:"var(--c-z2)",  bbox:[0.52,0.05,0.46,0.18],
-    fr:"Morphologie, classification &amp; cartographie", en:"Morphology, Classification &amp; Mapping" },
+  { id:"z1",  color:"var(--c-z1)",  bbox:[0.02,0.04,0.46,0.20],
+    fr:"Pédogenèse &amp; genèse des sols", en:"Pedogenesis &amp; Soil Genesis", img:"afes_z1_pedogenesis.png", comp:"folio" },
+  { id:"z2",  color:"var(--c-z2)",  bbox:[0.52,0.04,0.46,0.20],
+    fr:"Morphologie, classification &amp; cartographie", en:"Morphology, Classification &amp; Mapping", img:"afes_z2_morphology.png", comp:"folio" },
 
-  { id:"z3",  color:"var(--c-z3)",  bbox:[0.02,0.24,0.31,0.28],
-    fr:"Physique &amp; mécanique du sol", en:"Soil Physics &amp; Mechanics" },
-  { id:"z4",  color:"var(--c-z4)",  bbox:[0.345,0.24,0.31,0.28],
-    fr:"Chimie &amp; biogéochimie", en:"Soil Chemistry &amp; Biogeochemistry" },
-  { id:"z5",  color:"var(--c-z5)",  bbox:[0.67,0.24,0.31,0.28],
-    fr:"Biologie, microbiologie &amp; écologie", en:"Soil Biology, Microbiology &amp; Ecology" },
+  { id:"z3",  color:"var(--c-z3)",  bbox:[0.02,0.28,0.30,0.24],
+    fr:"Physique &amp; mécanique du sol", en:"Soil Physics &amp; Mechanics", img:"afes_z3_physics.png", comp:"plate" },
+  { id:"z4",  color:"var(--c-z4)",  bbox:[0.35,0.28,0.30,0.24],
+    fr:"Chimie &amp; biogéochimie", en:"Soil Chemistry &amp; Biogeochemistry", img:"afes_z4_chemistry.png", comp:"plate" },
+  { id:"z5",  color:"var(--c-z5)",  bbox:[0.68,0.28,0.30,0.24],
+    fr:"Biologie, microbiologie &amp; écologie", en:"Soil Biology, Microbiology &amp; Ecology", img:"afes_z5_biology.png", comp:"plate" },
 
-  { id:"z6",  color:"var(--c-z6)",  bbox:[0.02,0.53,0.31,0.22],
-    fr:"Sols &amp; plantes (édaphologie)", en:"Soils &amp; Plants (Edaphology)" },
-  { id:"z7",  color:"var(--c-z7)",  bbox:[0.345,0.53,0.31,0.22],
-    fr:"Gestion &amp; usage des sols", en:"Soil Management &amp; Land Use" },
-  { id:"z8",  color:"var(--c-z8)",  bbox:[0.67,0.53,0.31,0.22],
-    fr:"Sols anthropogéniques", en:"Anthropogenic Soils" },
+  { id:"z6",  color:"var(--c-z6)",  bbox:[0.02,0.56,0.30,0.20],
+    fr:"Sols &amp; plantes (édaphologie)", en:"Soils &amp; Plants (Edaphology)", img:"afes_z6_edaphology.png", comp:"folio" },
+  { id:"z7",  color:"var(--c-z7)",  bbox:[0.35,0.56,0.30,0.20],
+    fr:"Gestion &amp; usage des sols", en:"Soil Management &amp; Land Use", img:"afes_z7_management.png", comp:"folio" },
+  { id:"z8",  color:"var(--c-z8)",  bbox:[0.68,0.56,0.30,0.20],
+    fr:"Sols anthropogéniques", en:"Anthropogenic Soils", img:"afes_z8_anthropogenic.png", comp:"folio" },
 
-  { id:"z9",  color:"var(--c-z9)",  bbox:[0.02,0.76,0.48,0.23],
-    fr:"Sols, environnement &amp; climat", en:"Soils, Environment &amp; Climate" },
-  { id:"z10", color:"var(--c-z10)", bbox:[0.52,0.76,0.46,0.23],
-    fr:"Sols &amp; société · frontières", en:"Soils &amp; Society · Frontiers" },
+  { id:"z9",  color:"var(--c-z9)",  bbox:[0.02,0.80,0.46,0.18],
+    fr:"Sols, environnement &amp; climat", en:"Soils, Environment &amp; Climate", img:"afes_z9_environment.png", comp:"folio" },
+  { id:"z10", color:"var(--c-z10)", bbox:[0.52,0.80,0.46,0.18],
+    fr:"Sols &amp; société · frontières", en:"Soils &amp; Society · Frontiers", img:"afes_z10_society.png", comp:"folio" },
 ];
 
 /* -----------------------------------------------------------------------------
