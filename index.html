@@ -8,253 +8,350 @@
 <link rel="stylesheet" href="map-shared.css"/>
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css"/>
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css"/>
+<script src="panzoom.min.js" defer></script>
 <style>
 /* ═══════════════════════════════════════════════════════════════════════
-   THE FIELD ATLAS — single-language, no-bridges edition
-   A typographic plate of soil science. Ten domains framed by four
-   reading axes (Origins · Context · Fundamental · Applied). Click any
-   discipline for its definition and related fields. French or English.
+   THE FIELD ATLAS — pannable / zoomable edition
+   A typographic plate of soil science you navigate like a real map.
    ═══════════════════════════════════════════════════════════════════════ */
 
 :root {
-  --plate-w: 1760px;
-  --plate-h: 1040px;
-  --frame: 28px;
+  --plate-w: 3520px;
+  --plate-h: 2000px;
+  --frame: 56px;
+  --topbar-h: 56px;
 }
+
+* { box-sizing: border-box; }
 
 html, body {
   background:
-    radial-gradient(1200px 600px at 50% 0%, rgba(90,58,34,.04), transparent),
+    radial-gradient(1600px 900px at 50% 0%, rgba(90,58,34,.04), transparent),
     #EEE9DF;
   color: var(--soil);
   font-family: var(--font-sans);
-  min-height: 100vh;
+  height: 100%;
+  overflow: hidden;
 }
 body { margin: 0; }
 
-/* ─── Cover / masthead band ─── */
-.masthead {
-  max-width: 1760px; margin: 0 auto;
-  padding: 28px 32px 6px;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  gap: 28px;
-  align-items: start;
+/* ─── Top bar ─── */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; height: var(--topbar-h);
+  display: flex; align-items: center;
+  gap: 18px;
+  padding: 0 18px;
+  background: rgba(247, 245, 240, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--soil-10);
+  z-index: 50;
 }
-.masthead .brandline {
-  font-family: var(--font-mono); font-size: 10.5px;
-  letter-spacing: 0.12em; text-transform: uppercase;
+.topbar .mark {
   color: var(--soil);
-  display: flex; gap: 10px; align-items: center;
+  display: inline-flex; align-items: center;
+  flex: none;
 }
-.masthead .brandline .tag { color: var(--soil-60); }
-.masthead .brandline .dot {
-  width: 4px; height: 4px; border-radius: 9999px; background: var(--soil-30);
+.topbar .mark svg { display: block; }
+.topbar .brandline {
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--soil-60);
+  display: flex; gap: 8px; align-items: center;
+  flex: none;
 }
-.masthead .brandline.right { justify-content: flex-end; text-align: right; }
-
-.masthead .title {
-  text-align: center;
-  grid-column: 1 / -1;
-  margin-top: 20px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid var(--soil-15);
+.topbar .brandline .dot {
+  width: 3px; height: 3px; border-radius: 9999px; background: var(--soil-30);
 }
-.masthead .title h1 {
+.topbar .brandline .tag { color: var(--soil-60); }
+.topbar .title {
+  flex: 1; min-width: 0;
+  display: flex; align-items: baseline; gap: 14px;
+  overflow: hidden;
+}
+.topbar .title h1 {
   margin: 0;
-  font-size: clamp(38px, 4.8vw, 58px);
+  font-size: 17px;
   font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 0.98;
+  letter-spacing: -0.015em;
   color: var(--soil);
-  text-wrap: balance;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.masthead .title .sub {
-  display: block;
-  margin: 16px auto 0;
-  font-size: clamp(14px, 1.2vw, 17px);
-  font-weight: 400;
-  color: var(--soil-60);
-  letter-spacing: -0.005em;
-  line-height: 1.45;
-  max-width: 960px;
-  text-wrap: pretty;
-}
-
-/* ─── Stats band ─── */
-.stats {
-  max-width: 1760px; margin: 0 auto;
-  padding: 14px 32px 14px;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 24px; align-items: center;
-}
-.stats .numbers { display: flex; gap: 36px; }
-.stats .n { display: flex; align-items: baseline; gap: 8px; }
-.stats .n .num {
-  font-family: var(--font-sans);
-  font-size: 30px; font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--soil);
-  line-height: 1;
-}
-.stats .n .lbl {
-  font-family: var(--font-mono); font-size: 10.5px;
+.topbar .title .stat-inline {
+  font-family: var(--font-mono); font-size: 10px;
   letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--soil-60);
+  white-space: nowrap;
+  flex: none;
 }
-.stats .blurb {
-  text-align: center;
-  font-size: 14.5px; color: var(--soil-60);
-  line-height: 1.55; max-width: 780px; margin: 0 auto;
-  text-wrap: pretty;
+.topbar .title .stat-inline b { color: var(--soil); font-weight: 700; }
+.topbar .actions {
+  display: inline-flex; align-items: center; gap: 8px;
+  flex: none;
 }
-.stats .blurb em { font-style: italic; color: var(--soil); }
-
-/* ─── Controls ─── */
-.controls {
-  display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
-  justify-content: flex-end;
-}
-.controls .grp {
+.topbar .lang-grp {
   display: inline-flex; align-items: center;
   background: var(--white);
   border: 1px solid var(--soil-15);
   border-radius: 9999px;
   padding: 3px;
 }
-.controls .grp .glabel {
-  font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.1em;
-  text-transform: uppercase; color: var(--soil-60);
-  padding: 0 10px 0 12px;
-}
-.controls button.chip {
-  padding: 5px 13px; border-radius: 9999px;
-  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.08em;
-  text-transform: uppercase; color: var(--soil);
+.topbar .lang-grp button {
+  padding: 4px 11px; border-radius: 9999px;
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--soil); border: 0; background: none;
+  cursor: pointer;
   transition: background var(--duration-fast) var(--ease-out),
               color var(--duration-fast) var(--ease-out);
 }
-.controls button.chip:hover { background: var(--soil-05); }
-.controls button.chip.active { background: var(--soil); color: var(--root); }
+.topbar .lang-grp button:hover { background: var(--soil-05); }
+.topbar .lang-grp button.active { background: var(--soil); color: var(--root); }
 
-/* ─── Plate frame ─── */
-.plate-wrap {
-  max-width: 1760px; margin: 0 auto;
-  padding: 10px 32px 0;
+.topbar .iconbtn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 6px;
+  height: 30px; padding: 0 12px;
+  background: var(--white);
+  border: 1px solid var(--soil-15);
+  border-radius: 9999px;
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--soil);
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out);
 }
-.plate {
+.topbar .iconbtn:hover { background: var(--soil); color: var(--root); border-color: var(--soil); }
+.topbar .iconbtn.icon-only { width: 30px; padding: 0; }
+.topbar .iconbtn i { font-size: 14px; }
+
+/* ─── Viewport (the map area) ─── */
+.viewport {
+  position: fixed;
+  top: var(--topbar-h);
+  left: 0; right: 0; bottom: 0;
+  overflow: hidden;
+  background: #EEE9DF;
+  cursor: grab;
+}
+.viewport.dragging { cursor: grabbing; }
+
+.plate-inner {
   position: relative;
-  aspect-ratio: 1760 / 1040;
+  width: var(--plate-w);
+  height: var(--plate-h);
   background: var(--root);
   border: 1px solid var(--soil-15);
   border-radius: 6px;
-  overflow: hidden;
-  box-shadow: 0 4px 24px rgba(59,50,44,.06);
+  box-shadow: 0 10px 60px rgba(59,50,44,.10);
+  /* the inner frame is on .plate-frame so it doesn't interfere with .zone children */
+  transform-origin: 0 0;
 }
-.plate::before {
-  /* inner hairline frame — printmark feel */
-  content: ""; position: absolute;
-  inset: var(--frame);
+.plate-inner .plate-frame {
+  position: absolute; inset: var(--frame);
   border: 1px solid var(--soil-10);
   border-radius: 3px;
   pointer-events: none;
   z-index: 1;
 }
-.plate::after {
-  /* corner tick marks */
-  content: "";
+.plate-inner .plate-ticks {
   position: absolute;
-  inset: calc(var(--frame) - 10px);
+  inset: calc(var(--frame) - 14px);
   pointer-events: none; z-index: 2;
   background-image:
-    linear-gradient(to right, var(--soil) 12px, transparent 12px),
-    linear-gradient(to right, var(--soil) 12px, transparent 12px),
-    linear-gradient(to bottom, var(--soil) 12px, transparent 12px),
-    linear-gradient(to bottom, var(--soil) 12px, transparent 12px);
+    linear-gradient(to right,  var(--soil) 18px, transparent 18px),
+    linear-gradient(to right,  var(--soil) 18px, transparent 18px),
+    linear-gradient(to bottom, var(--soil) 18px, transparent 18px),
+    linear-gradient(to bottom, var(--soil) 18px, transparent 18px);
   background-repeat: no-repeat;
-  background-position:
-    top left, top right,
-    top left, top right;
-  background-size: 12px 1px, 12px 1px, 1px 12px, 1px 12px;
+  background-position: top left, top right, top left, top right;
+  background-size: 18px 1.5px, 18px 1.5px, 1.5px 18px, 1.5px 18px;
+}
+.plate-inner .plate-ticks::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right,  var(--soil) 18px, transparent 18px),
+    linear-gradient(to right,  var(--soil) 18px, transparent 18px),
+    linear-gradient(to bottom, var(--soil) 18px, transparent 18px),
+    linear-gradient(to bottom, var(--soil) 18px, transparent 18px);
+  background-repeat: no-repeat;
+  background-position: bottom left, bottom right, bottom left, bottom right;
+  background-size: 18px 1.5px, 18px 1.5px, 1.5px 18px, 1.5px 18px;
 }
 
-.plate-inner {
+/* The "stage" — children of plate-inner positioned by % within the frame */
+.plate-stage {
   position: absolute;
   inset: var(--frame);
   z-index: 3;
 }
 
-/* axis labels */
+/* Plate masthead (in-canvas printed title) */
+.plate-masthead {
+  position: absolute;
+  top: -32px; left: 0; right: 0;
+  text-align: center;
+  font-family: var(--font-mono); font-size: 14px;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--soil-60);
+  pointer-events: none;
+}
+.plate-masthead b { color: var(--soil); font-weight: 700; letter-spacing: 0.22em; }
+
+/* ─── Axis labels (viewport-fixed, always visible) ─── */
+.axes {
+  position: fixed;
+  top: var(--topbar-h);
+  left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 30;
+}
 .axis {
   position: absolute;
   font-family: var(--font-mono); font-size: 10.5px;
-  letter-spacing: 0.14em; text-transform: uppercase;
+  letter-spacing: 0.18em; text-transform: uppercase;
   color: var(--soil-60);
-  z-index: 4;
+  background: rgba(247, 245, 240, 0.78);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 5px 12px;
+  border: 1px solid var(--soil-10);
+  border-radius: 9999px;
   white-space: nowrap;
 }
-.axis.top    { top: 10px;    left: 50%; transform: translateX(-50%); }
-.axis.bottom { bottom: 10px; left: 50%; transform: translateX(-50%); }
-.axis.left   { left: 14px;   top: 50%;  transform: translate(-50%, -50%) rotate(-90deg); }
-.axis.right  { right: 14px;  top: 50%;  transform: translate(50%, -50%)  rotate(90deg);  }
-.axis b { color: var(--soil); font-weight: 700; letter-spacing: 0.16em; }
+.axis b { color: var(--soil); font-weight: 700; letter-spacing: 0.20em; }
+.axis.top    { top: 12px;    left: 50%; transform: translateX(-50%); }
+.axis.bottom { bottom: 12px; left: 50%; transform: translateX(-50%); }
+.axis.left   { left: 14px;   top: 50%;  transform: translate(-50%, -50%) rotate(-90deg); transform-origin: center; }
+.axis.right  { right: 14px;  top: 50%;  transform: translate(50%, -50%)  rotate(90deg);  transform-origin: center; }
 
 /* ─── Zones ─── */
 .zone {
   position: absolute;
   background:
-    linear-gradient(180deg, var(--zt), rgba(247,245,240,.05));
-  padding: 14px 16px 16px;
+    linear-gradient(180deg, var(--zt), rgba(247,245,240,.04));
+  padding: 22px 26px 26px;
   overflow: hidden;
   z-index: 3;
-  border-top: 2px solid var(--zc);
-  border-right: 1px dashed var(--soil-10);
-  display: flex; flex-direction: column;
+  border-top: 3px solid var(--zc);
+  border-radius: 4px;
 }
-.zone:last-of-type { border-right: 0; }
-.zone .head {
-  display: flex; gap: 10px; align-items: flex-start;
-  margin-bottom: 10px;
-  min-width: 0;
+
+.zone .zone-figure {
+  margin: 0;
+  padding: 6px;
+  border: 1px solid color-mix(in oklab, var(--soil) 12%, transparent);
+  border-radius: 4px;
+  background: color-mix(in oklab, var(--root) 65%, transparent);
+  display: flex; align-items: center; justify-content: center;
+  min-width: 0; min-height: 0;
+  overflow: hidden;
+}
+.zone .zone-illustration {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto; height: auto;
+  object-fit: contain;
 }
 .zone .medallion {
   display: inline-flex; align-items: center; justify-content: center;
-  min-width: 30px; height: 30px; padding: 0 9px;
+  min-width: 44px; height: 38px; padding: 0 14px;
   border: 1.5px solid var(--zc);
   border-radius: 9999px;
-  font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+  font-family: var(--font-mono); font-size: 16px; font-weight: 700;
   letter-spacing: 0.06em;
   color: var(--zc);
   background: var(--root);
   flex: none;
 }
-.zone .hmeta { min-width: 0; flex: 1; }
-.zone .eyebrow {
-  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em;
-  text-transform: uppercase; color: var(--zc);
-  margin-bottom: 3px; line-height: 1.1;
-}
-.zone h2 {
-  margin: 0 0 4px;
+.zone .zone-title {
+  margin: 0;
   font-family: var(--font-sans);
   font-weight: 700;
-  font-size: clamp(15px, 1.2vw, 19px);
+  font-size: 32px;
   color: var(--soil);
-  letter-spacing: -0.01em;
-  line-height: 1.14;
+  letter-spacing: -0.015em;
+  line-height: 1.1;
   text-wrap: balance;
 }
-.zone h2 .en { display: block; }
-body.lang-fr .zone h2 .en,
+.zone .zone-title .en { display: block; }
+body.lang-fr .zone .zone-title .en,
 body.lang-fr .node .en { display: none; }
-body.lang-en .zone h2 .fr,
+body.lang-en .zone .zone-title .fr,
 body.lang-en .node .fr { display: none; }
+
+/* Composition A — Folio (illustration as left-column anchor) */
+.zone[data-comp="folio"] {
+  display: grid;
+  grid-template-columns: minmax(160px, 28%) 1fr;
+  grid-template-rows: auto 1fr;
+  column-gap: 24px;
+  row-gap: 14px;
+}
+.zone[data-comp="folio"] .zone-figure {
+  grid-column: 1; grid-row: 1 / -1;
+  align-self: stretch;
+}
+.zone[data-comp="folio"] .zone-head {
+  grid-column: 2; grid-row: 1;
+  display: flex; gap: 14px;
+  align-items: flex-start;
+  min-width: 0;
+}
+.zone[data-comp="folio"] .nodes {
+  grid-column: 2; grid-row: 2;
+  align-self: start;
+}
+
+/* Composition B — Plate (illustration top-mounted as a centered specimen) */
+.zone[data-comp="plate"] {
+  display: grid;
+  grid-template-rows: minmax(180px, 1fr) auto auto;
+  row-gap: 12px;
+  padding: 22px 24px;
+}
+.zone[data-comp="plate"] .zone-figure {
+  grid-row: 1;
+  align-self: stretch; justify-self: center;
+  width: auto;
+  aspect-ratio: 1;
+  max-width: 100%;
+  background: transparent;
+}
+.zone[data-comp="plate"] .zone-head {
+  grid-row: 2;
+  display: block;
+  text-align: center;
+}
+.zone[data-comp="plate"] .zone-head .medallion {
+  position: absolute;
+  top: 14px; right: 14px;
+  background: var(--root);
+}
+.zone[data-comp="plate"] .zone-title {
+  font-size: 26px;
+  letter-spacing: -0.005em;
+  line-height: 1.16;
+}
+.zone[data-comp="plate"] .nodes {
+  grid-row: 3;
+  justify-content: center;
+  gap: 7px 9px;
+}
+.zone[data-comp="plate"] .node {
+  padding: 6px 16px 7px;
+  font-size: 17px;
+}
 
 /* ─── Nodes — pill chips ─── */
 .nodes {
   display: flex; flex-wrap: wrap;
-  gap: 6px 7px;
+  gap: 9px 11px;
   align-content: flex-start;
   flex: 1;
   min-width: 0;
@@ -262,10 +359,10 @@ body.lang-en .node .fr { display: none; }
 .node {
   position: relative;
   background: var(--white);
-  border: 1px solid var(--zc);
+  border: 1.25px solid var(--zc);
   border-radius: 9999px;
-  padding: 5px 13px 6px;
-  font-family: var(--font-sans); font-size: 12.5px;
+  padding: 7px 18px 8px;
+  font-family: var(--font-sans); font-size: 18px;
   line-height: 1.25;
   color: var(--soil);
   text-align: left; cursor: pointer;
@@ -289,79 +386,229 @@ body.lang-en .node .fr { display: none; }
 .node:hover {
   background: var(--zc); border-color: var(--zc); color: var(--root);
   transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(59,50,44,.14);
+  box-shadow: 0 2px 10px rgba(59,50,44,.18);
 }
-
 .node.dim { opacity: 0.28; }
 .node.highlight {
   background: var(--zc); border-color: var(--zc); color: var(--root);
-  box-shadow: 0 0 0 3px var(--zt), 0 2px 10px rgba(59,50,44,.18);
+  box-shadow: 0 0 0 4px var(--zt), 0 3px 14px rgba(59,50,44,.20);
 }
 
-/* ─── Legend ─── */
-.legend-wrap {
-  max-width: 1760px; margin: 20px auto 0;
-  padding: 24px 32px 12px;
-  display: grid; grid-template-columns: 1.3fr 1fr; gap: 40px;
-  border-top: 1px solid var(--soil-15);
+/* ─── Zoom-aware visibility ─── */
+/* Far zoom — hide pills, emphasize zones */
+body.zoom-far .nodes { opacity: 0; pointer-events: none; transition: opacity .25s ease; }
+body.zoom-far .zone .zone-title { font-size: 56px; }
+body.zoom-far .zone[data-comp="plate"] .zone-title { font-size: 44px; }
+body.zoom-far .zone .medallion { font-size: 22px; min-width: 60px; height: 50px; padding: 0 18px; }
+
+body.zoom-mid .nodes { opacity: 1; transition: opacity .25s ease; }
+
+/* Near zoom — slightly dim illustrations so pills stand out */
+body.zoom-near .zone .zone-figure { opacity: .85; }
+
+/* ─── Legend chip (bottom-left, expands on click) ─── */
+.legend-chip {
+  position: fixed;
+  left: 18px; bottom: 18px;
+  z-index: 40;
+  background: rgba(247, 245, 240, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--soil-15);
+  border-radius: 14px;
+  box-shadow: 0 6px 22px rgba(59,50,44,.10);
+  overflow: hidden;
+  max-width: 320px;
+  transition: max-height .3s ease, max-width .3s ease;
 }
-.legend-wrap .block h3 {
-  margin: 0 0 12px;
-  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em;
-  text-transform: uppercase; color: var(--soil-60);
-  font-weight: 400;
+.legend-chip .legend-toggle {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px;
+  width: 100%;
+  border: 0; background: none; cursor: pointer;
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--soil);
 }
-.legend-wrap .block h3 b { color: var(--soil); font-weight: 700; }
-.lgd {
-  display: grid; grid-template-columns: repeat(2, 1fr);
-  gap: 6px 22px;
-  font-size: 13px; color: var(--soil);
+.legend-chip .legend-toggle b { font-weight: 700; }
+.legend-chip .legend-toggle .chev {
+  margin-left: auto;
+  transition: transform .25s ease;
+  font-size: 13px; color: var(--soil-60);
 }
-.lgd .lg {
-  display: flex; gap: 10px; align-items: baseline;
-  padding: 4px 0;
-  min-width: 0;
+.legend-chip.open .legend-toggle .chev { transform: rotate(180deg); }
+
+.legend-chip .legend-body {
+  display: none;
+  padding: 4px 10px 12px;
+  border-top: 1px solid var(--soil-10);
 }
-.lgd .lg .num {
-  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.08em;
+.legend-chip.open .legend-body { display: block; }
+.legend-chip .lg {
+  display: flex; gap: 10px; align-items: center;
+  padding: 6px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-out);
+  background: none; border: 0;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+}
+.legend-chip .lg:hover { background: var(--soil-05); }
+.legend-chip .lg .num {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em;
   color: var(--soil-60); min-width: 20px; flex: none;
 }
-.lgd .lg .sw {
-  width: 14px; height: 2px; background: var(--zc);
-  margin-top: 8px; flex: none;
+.legend-chip .lg .sw {
+  width: 14px; height: 14px; background: var(--zc);
+  border-radius: 4px;
+  flex: none;
 }
-.lgd .lg .lb { font-size: 14px; color: var(--soil); min-width: 0; line-height: 1.4; }
+.legend-chip .lg .lb { font-size: 13px; color: var(--soil); line-height: 1.35; }
 
-.reading .note {
-  font-size: 14px; color: var(--soil-60); line-height: 1.6;
-  margin: 0 0 12px;
-  text-wrap: pretty;
+/* ─── Minimap (bottom-right) ─── */
+.minimap {
+  position: fixed;
+  right: 18px; bottom: 18px;
+  z-index: 40;
+  width: 240px;
+  background: rgba(247, 245, 240, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--soil-15);
+  border-radius: 14px;
+  box-shadow: 0 6px 22px rgba(59,50,44,.10);
+  padding: 8px;
 }
-.reading .note em { font-style: italic; color: var(--soil); }
-.reading .sources {
-  font-size: 12px; color: var(--soil-60); line-height: 1.6;
-  text-wrap: pretty;
-}
-.reading .sources em { font-style: italic; color: var(--soil); }
-
-/* ─── Printmark footer ─── */
-.printmark {
-  max-width: 1760px; margin: 0 auto;
-  padding: 18px 32px 36px;
-  border-top: 1px solid var(--soil-15);
-  display: flex; justify-content: space-between; align-items: center;
-  gap: 20px;
-  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.1em;
+.minimap .mm-title {
+  display: flex; align-items: center; gap: 8px;
+  padding: 2px 6px 8px;
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em;
   text-transform: uppercase; color: var(--soil-60);
 }
-.printmark .mark {
-  color: var(--soil);
-  display: inline-flex; align-items: center;
+.minimap .mm-title b { color: var(--soil); font-weight: 700; }
+.minimap svg.mm-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--root);
+  border-radius: 6px;
+  border: 1px solid var(--soil-10);
+  cursor: pointer;
 }
-.printmark .mark svg { display: block; }
-.printmark .credit { text-align: right; line-height: 1.6; }
+.minimap svg.mm-svg .mm-zone { transition: opacity .15s ease; }
+.minimap svg.mm-svg .mm-zone:hover { opacity: .75; }
+.minimap svg.mm-svg .mm-viewport {
+  fill: rgba(59,50,44,0.08);
+  stroke: var(--soil);
+  stroke-width: 1.5;
+  pointer-events: none;
+}
 
-/* ─── Side panel ─── */
+/* ─── Info modal ─── */
+.modal-scrim {
+  position: fixed; inset: 0;
+  background: rgba(59, 50, 44, 0.30);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-base) var(--ease-out);
+  z-index: 110;
+}
+body.info-open .modal-scrim { opacity: 1; pointer-events: auto; }
+
+.info-modal {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -48%) scale(.96);
+  opacity: 0;
+  pointer-events: none;
+  width: min(640px, 92vw);
+  max-height: min(80vh, 720px);
+  overflow: auto;
+  background: var(--white);
+  border: 1px solid var(--soil-15);
+  border-radius: 14px;
+  box-shadow: 0 24px 60px rgba(59,50,44,.22);
+  z-index: 120;
+  transition: opacity var(--duration-base) var(--ease-out),
+              transform var(--duration-base) var(--ease-out);
+  padding: 32px 36px 36px;
+}
+body.info-open .info-modal {
+  opacity: 1; pointer-events: auto;
+  transform: translate(-50%, -50%) scale(1);
+}
+.info-modal .imclose {
+  position: absolute; top: 14px; right: 14px;
+  width: 32px; height: 32px; border-radius: 9999px;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--soil-60); cursor: pointer;
+  background: none; border: 0;
+}
+.info-modal .imclose:hover { background: var(--soil-05); color: var(--soil); }
+.info-modal h2 {
+  margin: 0 0 6px;
+  font-family: var(--font-sans);
+  font-size: clamp(24px, 2.4vw, 30px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--soil);
+  text-wrap: balance;
+}
+.info-modal .im-sub {
+  display: block;
+  margin: 0 0 18px;
+  font-size: 14.5px; color: var(--soil-60);
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+.info-modal .im-stats {
+  display: flex; gap: 26px;
+  padding: 14px 0;
+  border-top: 1px solid var(--soil-10);
+  border-bottom: 1px solid var(--soil-10);
+  margin-bottom: 18px;
+}
+.info-modal .im-stats .n { display: flex; align-items: baseline; gap: 8px; }
+.info-modal .im-stats .num {
+  font-family: var(--font-sans); font-size: 26px; font-weight: 700;
+  letter-spacing: -0.02em; color: var(--soil); line-height: 1;
+}
+.info-modal .im-stats .lbl {
+  font-family: var(--font-mono); font-size: 9.5px;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--soil-60);
+}
+.info-modal .im-section {
+  margin: 18px 0 8px;
+  font-family: var(--font-mono); font-size: 9.5px;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--soil-60);
+  display: flex; gap: 10px; align-items: baseline;
+}
+.info-modal .im-section::after {
+  content: ""; flex: 1; height: 1px; background: var(--soil-10);
+}
+.info-modal .im-blurb,
+.info-modal .im-note {
+  font-size: 14.5px; color: var(--soil); line-height: 1.6;
+  margin: 0 0 10px;
+  text-wrap: pretty;
+}
+.info-modal .im-blurb em,
+.info-modal .im-note em { font-style: italic; color: var(--soil); }
+.info-modal .im-sources {
+  font-size: 12px; color: var(--soil-60); line-height: 1.55;
+  margin: 0; text-wrap: pretty;
+}
+.info-modal .im-sources em { font-style: italic; color: var(--soil); }
+.info-modal .im-credit {
+  margin-top: 18px;
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--soil-60);
+  display: flex; justify-content: space-between; gap: 10px;
+}
+
+/* ─── Side panel (node detail) ─── */
 .panel-scrim {
   position: fixed; inset: 0;
   background: rgba(59, 50, 44, 0.22);
@@ -488,90 +735,112 @@ body.panel-open .panel-scrim { opacity: 1; pointer-events: auto; }
   padding: 1px 5px; border: 1px solid var(--soil-15); border-radius: 3px;
 }
 
-/* Small screen fallback */
-@media (max-width: 900px) {
-  .legend-wrap { grid-template-columns: 1fr; gap: 24px; }
-  .masthead { grid-template-columns: 1fr; }
-  .masthead .brandline.right { justify-content: flex-start; text-align: left; }
-  .stats { grid-template-columns: 1fr; }
-  .controls { justify-content: flex-start; }
-  .plate .zone h2 { font-size: 13px; }
-  .plate .node { font-size: 10.5px; }
-  .printmark { grid-template-columns: 1fr; text-align: left; }
-  .printmark .right, .printmark .center { text-align: left; }
+/* ─── Narrow viewports ─── */
+@media (max-width: 720px) {
+  .topbar .brandline { display: none; }
+  .topbar .title .stat-inline { display: none; }
+  .topbar .iconbtn span.lbl { display: none; }
+  .topbar .iconbtn { padding: 0 8px; min-width: 30px; }
+
+  .axis.left, .axis.right { display: none; }
+  .axis.top, .axis.bottom { font-size: 9.5px; padding: 4px 9px; }
+
+  .legend-chip { max-width: 200px; }
+  .legend-chip .legend-toggle { padding: 8px 12px; font-size: 9.5px; }
+  .minimap { width: 160px; }
 }
 </style>
 </head>
 <body class="lang-fr" data-screen-label="Map of Soil Science — Field Atlas">
 
-<header class="masthead">
+<header class="topbar">
+  <div class="mark" aria-label="Ekodama">
+    <svg width="22" height="18" viewBox="0 0 1001.83 823.67" aria-hidden="true">
+      <polyline fill="currentColor" points="216.97 536.68 216.97 95.16 379.14 0 379.14 .78 379.89 0 379.89 664.58 666.11 378.36 890.69 378.36 594.55 674.47 1001.83 673.73 1001.83 823.67 0 823.67 0 674.47 217.75 674.47"/>
+    </svg>
+  </div>
   <div class="brandline">
     <span>Ekodama</span>
     <span class="dot"></span>
     <span class="tag" data-i18n="plateTag">Planche I</span>
   </div>
-  <div></div>
-  <div class="brandline right">
-    <span class="tag" data-i18n="draftTag">Avril 2026 · Brouillon v2</span>
-    <span class="dot"></span>
-    <span>CC BY-SA 4.0</span>
-  </div>
-
   <div class="title">
     <h1 data-i18n="headingMain">La carte de la science des sols</h1>
-    <span class="sub" data-i18n-html="headingSub"></span>
+    <span class="stat-inline"><b>10</b> <span data-i18n="statDomains">Domaines</span> · <b>85</b> <span data-i18n="statDisciplines">Disciplines</span></span>
+  </div>
+  <div class="actions">
+    <span class="lang-grp">
+      <button id="btn-fr" class="active" onclick="setLang('fr')">FR</button>
+      <button id="btn-en" onclick="setLang('en')">EN</button>
+    </span>
+    <button class="iconbtn" id="btn-fit" onclick="fitToView(true)" title="Fit to view (0)">
+      <i class="ph ph-frame-corners"></i><span class="lbl" data-i18n="topbarFit">Fit</span>
+    </button>
+    <button class="iconbtn icon-only" id="btn-info" onclick="openInfo()" title="Info">
+      <i class="ph ph-info"></i>
+    </button>
   </div>
 </header>
 
-<div class="stats">
-  <div class="numbers">
-    <div class="n"><span class="num">10</span><span class="lbl" data-i18n="statDomains">Domaines</span></div>
-    <div class="n"><span class="num">85</span><span class="lbl" data-i18n="statDisciplines">Disciplines</span></div>
-    <div class="n"><span class="num">2</span><span class="lbl" data-i18n="statLangs">Langues</span></div>
-  </div>
-  <div class="blurb" data-i18n-html="blurb"></div>
-  <div class="controls">
-    <span class="grp">
-      <span class="glabel" data-i18n="ctrlLang">Langue</span>
-      <button class="chip active" id="btn-fr" onclick="setLang('fr')">FR</button>
-      <button class="chip"        id="btn-en" onclick="setLang('en')">EN</button>
-    </span>
-  </div>
-</div>
-
-<div class="plate-wrap">
-  <div class="plate" id="plate">
-    <div class="axis top"    data-i18n-html="axisTop"></div>
-    <div class="axis bottom" data-i18n-html="axisBottom"></div>
-    <div class="axis left"   data-i18n-html="axisLeft"></div>
-    <div class="axis right"  data-i18n-html="axisRight"></div>
-
-    <div class="plate-inner" id="plate-inner">
+<div class="viewport" id="viewport">
+  <div class="plate-inner" id="plate-inner">
+    <div class="plate-frame"></div>
+    <div class="plate-ticks"></div>
+    <div class="plate-masthead">
+      <span data-i18n-html="plateMasthead"></span>
+    </div>
+    <div class="plate-stage" id="plate-stage">
       <!-- zones injected here -->
     </div>
   </div>
 </div>
 
-<div class="legend-wrap">
-  <div class="block">
-    <h3 data-i18n-html="legendTitle"></h3>
-    <div class="lgd" id="legend"></div>
-  </div>
-  <div class="block reading">
-    <h3 data-i18n-html="notesTitle"></h3>
-    <p class="note" data-i18n-html="notes1"></p>
-    <p class="sources" data-i18n-html="notes2"></p>
-  </div>
+<div class="axes">
+  <div class="axis top"    data-i18n-html="axisTop"></div>
+  <div class="axis bottom" data-i18n-html="axisBottom"></div>
+  <div class="axis left"   data-i18n-html="axisLeft"></div>
+  <div class="axis right"  data-i18n-html="axisRight"></div>
 </div>
 
-<footer class="printmark">
-  <div class="mark" aria-label="Ekodama">
-    <svg width="28" height="23" viewBox="0 0 1001.83 823.67" aria-hidden="true">
-      <polyline fill="currentColor" points="216.97 536.68 216.97 95.16 379.14 0 379.14 .78 379.89 0 379.89 664.58 666.11 378.36 890.69 378.36 594.55 674.47 1001.83 673.73 1001.83 823.67 0 823.67 0 674.47 217.75 674.47"/>
-    </svg>
+<aside class="legend-chip" id="legend-chip">
+  <button class="legend-toggle" onclick="toggleLegend()">
+    <i class="ph-bold ph-map-trifold" style="font-size:13px;"></i>
+    <span data-i18n="legendChip">Légende · 10 domaines</span>
+    <i class="ph ph-caret-up chev"></i>
+  </button>
+  <div class="legend-body" id="legend-body"></div>
+</aside>
+
+<aside class="minimap" id="minimap">
+  <div class="mm-title">
+    <i class="ph ph-compass" style="font-size:12px;"></i>
+    <span data-i18n="minimapTitle">Carte</span>
   </div>
-  <div class="credit" data-i18n-html="printRight"></div>
-</footer>
+  <svg class="mm-svg" id="mm-svg" viewBox="0 0 240 137" preserveAspectRatio="xMidYMid meet"></svg>
+</aside>
+
+<div class="modal-scrim" id="modal-scrim" onclick="closeInfo()"></div>
+<div class="info-modal" id="info-modal" role="dialog" aria-hidden="true">
+  <button class="imclose" onclick="closeInfo()" aria-label="Close">
+    <i class="ph ph-x" style="font-size:18px;"></i>
+  </button>
+  <h2 data-i18n="headingMain"></h2>
+  <span class="im-sub" data-i18n-html="headingSub"></span>
+  <div class="im-stats">
+    <div class="n"><span class="num">10</span><span class="lbl" data-i18n="statDomains">Domaines</span></div>
+    <div class="n"><span class="num">85</span><span class="lbl" data-i18n="statDisciplines">Disciplines</span></div>
+    <div class="n"><span class="num">2</span><span class="lbl" data-i18n="statLangs">Langues</span></div>
+  </div>
+  <div class="im-section" data-i18n="infoReading">Lire la planche</div>
+  <p class="im-blurb" data-i18n-html="blurb"></p>
+  <p class="im-note" data-i18n-html="notes1"></p>
+  <div class="im-section" data-i18n="infoSources">Sources</div>
+  <p class="im-sources" data-i18n-html="notes2"></p>
+  <div class="im-credit">
+    <span>Ekodama · <span data-i18n="plateTag">Planche I</span></span>
+    <span data-i18n="printRight">T. Fungenzi · 2026</span>
+  </div>
+</div>
 
 <div class="panel-scrim" id="panel-scrim" onclick="closePanel()"></div>
 
@@ -608,14 +877,17 @@ const I18N = {
     statDomains:     "Domaines",
     statDisciplines: "Disciplines",
     statLangs:       "Langues",
-    blurb:           "Cliquez une pastille pour lire sa <em>définition</em>, ses sous-branches et ses disciplines proches. La planche se lit selon deux axes — des <em>origines</em> en haut vers le <em>contexte</em> en bas, des sciences <em>fondamentales</em> à gauche vers les <em>pratiques appliquées</em> à droite.",
-    ctrlLang:        "Langue",
+    blurb:           "Cliquez une pastille pour lire sa <em>définition</em>, ses sous-branches et ses disciplines proches. Faites glisser la carte pour naviguer, molette ou pincez pour zoomer. La planche se lit selon deux axes — des <em>origines</em> en haut vers le <em>contexte</em> en bas, des sciences <em>fondamentales</em> à gauche vers les <em>pratiques appliquées</em> à droite.",
     axisTop:         "<b>Origines</b> · Genèse, morphologie, cartographie",
     axisBottom:      "<b>Contexte</b> · Environnement, climat, société",
     axisLeft:        "<b>Fondamentales</b> · Physique · Chimie · Biologie",
     axisRight:       "<b>Appliquées</b> · Plantes · Gestion · Anthropisés",
-    legendTitle:     "Légende · <b>Les dix domaines</b>",
-    notesTitle:      "Notes · <b>Lire la planche</b>",
+    legendChip:      "Légende · 10 domaines",
+    minimapTitle:    "Carte",
+    topbarFit:       "Ajuster",
+    plateMasthead:   "Ekodama · <b>Planche I</b> · La carte de la science des sols",
+    infoReading:     "Lire la planche",
+    infoSources:     "Sources",
     notes1:          "La planche se lit en quatre bandes. <em>Origines</em> en haut — comment les sols se forment et comment on les décrit. Les <em>sciences fondamentales</em> au milieu — physique, chimie, biologie. Les <em>pratiques appliquées</em> en dessous — plantes, gestion, sols anthropisés. La ligne <em>contexte</em> ancre le tout dans l'environnement, le climat et la société.",
     notes2:          "Taxonomie d'après les Divisions &amp; Commissions de l'IUSS, la SSSA, EGU Soil System Sciences, l'AFES, FAO / WRB, <em>Encyclopedia of Soil Science</em> (R. Lal éd.), Brady &amp; Weil. Inspirée des planches <em>Domain of Science</em> de Dominic Walliman.",
     panelSubs:       "Sous-branches",
@@ -632,14 +904,17 @@ const I18N = {
     statDomains:     "Domains",
     statDisciplines: "Disciplines",
     statLangs:       "Languages",
-    blurb:           "Click any discipline pill for its <em>definition</em>, sub-branches and related fields. The plate reads along two axes — from <em>origins</em> at the top to <em>context</em> at the bottom, from the <em>fundamental sciences</em> on the left to <em>applied practice</em> on the right.",
-    ctrlLang:        "Lang",
+    blurb:           "Click any discipline pill for its <em>definition</em>, sub-branches and related fields. Drag the map to pan, scroll or pinch to zoom. The plate reads along two axes — from <em>origins</em> at the top to <em>context</em> at the bottom, from the <em>fundamental sciences</em> on the left to <em>applied practice</em> on the right.",
     axisTop:         "<b>Origins</b> · Genesis, morphology, mapping",
     axisBottom:      "<b>Context</b> · Environment, climate, society",
     axisLeft:        "<b>Fundamental</b> · Physics · Chemistry · Biology",
     axisRight:       "<b>Applied</b> · Plants · Management · Human-made",
-    legendTitle:     "Legend · <b>The ten domains</b>",
-    notesTitle:      "Notes · <b>Reading the atlas</b>",
+    legendChip:      "Legend · 10 domains",
+    minimapTitle:    "Map",
+    topbarFit:       "Fit",
+    plateMasthead:   "Ekodama · <b>Plate I</b> · The Map of Soil Science",
+    infoReading:     "Reading the atlas",
+    infoSources:     "Sources",
     notes1:          "The plate reads in four bands. <em>Origins</em> at the top — how soils form and how we describe them. The <em>fundamental sciences</em> in the middle — physics, chemistry, biology. <em>Applied practice</em> below — plants, management, human-made soils. The <em>context</em> row grounds it all in environment, climate, and society.",
     notes2:          "Taxonomy after IUSS Divisions &amp; Commissions, SSSA, EGU Soil System Sciences, AFES, FAO / WRB, <em>Encyclopedia of Soil Science</em> (R. Lal ed.), Brady &amp; Weil. Inspired by Dominic Walliman's <em>Domain of Science</em> plates.",
     panelSubs:       "Sub-branches",
@@ -671,41 +946,34 @@ function applyI18N() {
 /* ═════ Render the plate ═════ */
 ZONES.forEach((z, i) => z.num = String(i+1).padStart(2, '0'));
 
-const plateInner = document.getElementById('plate-inner');
-
-function render() {
-  applyI18N();
-  renderZonesAndNodes();
-  renderLegend();
-}
+const stage = document.getElementById('plate-stage');
 
 function renderZonesAndNodes() {
   ZONES.forEach(z => {
     const el = document.createElement('section');
     el.className = 'zone zone-color-' + z.id;
     el.dataset.id = z.id;
+    el.dataset.comp = z.comp || 'folio';
     const [x, y, w, h] = z.bbox;
     el.style.left   = (x * 100) + '%';
     el.style.top    = (y * 100) + '%';
     el.style.width  = (w * 100) + '%';
     el.style.height = (h * 100) + '%';
     el.innerHTML = `
-      <div class="head">
-        <div class="medallion">${z.num}</div>
-        <div class="hmeta">
-          <div class="eyebrow">Zone ${z.num}</div>
-          <h2>
-            <span class="fr">${z.fr}</span><span class="en">${z.en}</span>
-          </h2>
-        </div>
-      </div>
+      ${z.img ? `<figure class="zone-figure"><img src="assets/${z.img}" class="zone-illustration" alt="" /></figure>` : ''}
+      <header class="zone-head">
+        <span class="medallion">${z.num}</span>
+        <h2 class="zone-title">
+          <span class="fr">${z.fr}</span><span class="en">${z.en}</span>
+        </h2>
+      </header>
       <div class="nodes" data-zone="${z.id}"></div>
     `;
-    plateInner.appendChild(el);
+    stage.appendChild(el);
   });
 
   NODES.forEach(n => {
-    const host = plateInner.querySelector(`.nodes[data-zone="${n.zone}"]`);
+    const host = stage.querySelector(`.nodes[data-zone="${n.zone}"]`);
     if (!host) return;
     const el = document.createElement('button');
     el.className = 'node';
@@ -716,20 +984,224 @@ function renderZonesAndNodes() {
   });
 }
 
+/* ═════ Legend chip ═════ */
 function renderLegend() {
   const lang = currentLang();
-  const leg = document.getElementById('legend');
-  leg.innerHTML = '';
+  const body = document.getElementById('legend-body');
+  body.innerHTML = '';
   ZONES.forEach(z => {
-    const el = document.createElement('div');
+    const el = document.createElement('button');
     el.className = 'lg zone-color-' + z.id;
-    const name = (lang === 'en' ? z.en : z.fr).replace(/&amp;/g, '&');
+    el.type = 'button';
+    const name = (lang === 'en' ? z.en : z.fr).replace(/&amp;/g, '&').replace(/<[^>]+>/g, '');
     el.innerHTML = `
       <span class="num">${z.num}</span>
       <span class="sw"></span>
       <span class="lb">${name}</span>`;
-    leg.appendChild(el);
+    el.addEventListener('click', () => { flyToZone(z.id); });
+    body.appendChild(el);
   });
+}
+
+function toggleLegend() {
+  document.getElementById('legend-chip').classList.toggle('open');
+}
+
+/* ═════ Minimap ═════ */
+const MM_W = 240, MM_H = 137;
+
+function renderMinimap() {
+  const svg = document.getElementById('mm-svg');
+  // Clear and redraw zones + viewport rect
+  svg.innerHTML = '';
+  // background plate
+  const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  bg.setAttribute('x', 0); bg.setAttribute('y', 0);
+  bg.setAttribute('width', MM_W); bg.setAttribute('height', MM_H);
+  bg.setAttribute('fill', '#F7F5F0');
+  svg.appendChild(bg);
+  // zones
+  ZONES.forEach(z => {
+    const [x, y, w, h] = z.bbox;
+    const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    r.setAttribute('class', 'mm-zone');
+    r.setAttribute('x', (x * MM_W).toFixed(2));
+    r.setAttribute('y', (y * MM_H).toFixed(2));
+    r.setAttribute('width',  (w * MM_W).toFixed(2));
+    r.setAttribute('height', (h * MM_H).toFixed(2));
+    const cssVar = getComputedStyle(document.documentElement).getPropertyValue('--' + z.id).trim() || '#888';
+    r.setAttribute('fill', cssVar);
+    r.setAttribute('opacity', '0.55');
+    r.style.cursor = 'pointer';
+    r.addEventListener('click', e => { e.stopPropagation(); flyToZone(z.id); });
+    svg.appendChild(r);
+  });
+  // viewport rect (updated by updateMinimapViewport)
+  const vp = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  vp.setAttribute('class', 'mm-viewport');
+  vp.setAttribute('id', 'mm-vp');
+  svg.appendChild(vp);
+}
+
+function updateMinimapViewport() {
+  if (!panzoomInst) return;
+  const t = panzoomInst.getTransform();
+  const vp = document.getElementById('viewport');
+  const vw = vp.clientWidth, vh = vp.clientHeight;
+  // Visible canvas region (in canvas px), clamped to canvas bounds
+  const canvasW = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--plate-w'));
+  const canvasH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--plate-h'));
+  let visX = -t.x / t.scale, visY = -t.y / t.scale;
+  let visW = vw / t.scale,   visH = vh / t.scale;
+  // To minimap units
+  const mx = Math.max(0, Math.min(MM_W, (visX / canvasW) * MM_W));
+  const my = Math.max(0, Math.min(MM_H, (visY / canvasH) * MM_H));
+  const mw = Math.max(2, Math.min(MM_W - mx, (visW / canvasW) * MM_W));
+  const mh = Math.max(2, Math.min(MM_H - my, (visH / canvasH) * MM_H));
+  const r = document.getElementById('mm-vp');
+  if (!r) return;
+  r.setAttribute('x', mx.toFixed(2));
+  r.setAttribute('y', my.toFixed(2));
+  r.setAttribute('width',  mw.toFixed(2));
+  r.setAttribute('height', mh.toFixed(2));
+}
+
+/* Click anywhere on minimap (background) — pan to that point */
+function setupMinimapClick() {
+  const svg = document.getElementById('mm-svg');
+  svg.addEventListener('click', e => {
+    if (e.target.classList.contains('mm-zone')) return; // handled per-zone
+    const rect = svg.getBoundingClientRect();
+    const fx = (e.clientX - rect.left) / rect.width;   // 0..1 within minimap
+    const fy = (e.clientY - rect.top)  / rect.height;
+    flyToCanvasPoint(fx, fy);
+  });
+}
+
+/* ═════ Pan/Zoom engine ═════ */
+let panzoomInst = null;
+
+function initPanzoom() {
+  const target = document.getElementById('plate-inner');
+  panzoomInst = panzoom(target, {
+    bounds: true,
+    boundsPadding: 0.20,
+    minZoom: 0.18,
+    maxZoom: 2.4,
+    smoothScroll: false,
+    zoomDoubleClickSpeed: 1.7,
+    beforeMouseDown: e => {
+      // don't start panning if the mousedown is on a node pill (let it click through)
+      return e.target.closest('.node, .panel, .info-modal, .legend-chip, .minimap, .topbar') !== null;
+    },
+    beforeWheel: e => {
+      // allow wheel zoom always
+      return false;
+    },
+  });
+
+  panzoomInst.on('panstart', () => document.getElementById('viewport').classList.add('dragging'));
+  panzoomInst.on('panend',   () => document.getElementById('viewport').classList.remove('dragging'));
+
+  let zoomFrame = 0;
+  panzoomInst.on('transform', () => {
+    if (zoomFrame) return;
+    zoomFrame = requestAnimationFrame(() => {
+      zoomFrame = 0;
+      updateZoomClass();
+      updateMinimapViewport();
+    });
+  });
+}
+
+function updateZoomClass() {
+  if (!panzoomInst) return;
+  const s = panzoomInst.getTransform().scale;
+  const b = document.body;
+  b.classList.toggle('zoom-far',  s < 0.40);
+  b.classList.toggle('zoom-mid',  s >= 0.40 && s <= 0.95);
+  b.classList.toggle('zoom-near', s > 0.95);
+}
+
+function getViewport() {
+  const v = document.getElementById('viewport');
+  return { w: v.clientWidth, h: v.clientHeight };
+}
+function getCanvasSize() {
+  const root = getComputedStyle(document.documentElement);
+  return {
+    w: parseFloat(root.getPropertyValue('--plate-w')),
+    h: parseFloat(root.getPropertyValue('--plate-h')),
+  };
+}
+
+/* Compute target transform to center a canvas region in the viewport at given scale */
+function computeCenterTransform(cx, cy, scale) {
+  const v = getViewport();
+  return {
+    scale,
+    x: v.w / 2 - cx * scale,
+    y: v.h / 2 - cy * scale,
+  };
+}
+
+/* Compute fit-to-view transform */
+function computeFitTransform(pad = 0.95) {
+  const v = getViewport(), c = getCanvasSize();
+  const scale = Math.min(v.w / c.w, v.h / c.h) * pad;
+  return computeCenterTransform(c.w / 2, c.h / 2, scale);
+}
+
+/* Compute zoom-to-zone transform */
+function computeZoneTransform(zone, pad = 0.86) {
+  const v = getViewport(), c = getCanvasSize();
+  const [x, y, w, h] = zone.bbox;
+  const zx = x * c.w, zy = y * c.h, zw = w * c.w, zh = h * c.h;
+  const scale = Math.min(v.w * pad / zw, v.h * pad / zh);
+  return computeCenterTransform(zx + zw / 2, zy + zh / 2, scale);
+}
+
+/* Animate panzoom to a target transform */
+function smoothMoveTo(target, duration = 600) {
+  if (!panzoomInst) return;
+  const start = { ...panzoomInst.getTransform() };
+  const t0 = performance.now();
+  function tick(now) {
+    const p = Math.min(1, (now - t0) / duration);
+    const e = 1 - Math.pow(1 - p, 3); // easeOutCubic
+    const s = start.scale + (target.scale - start.scale) * e;
+    const x = start.x + (target.x - start.x) * e;
+    const y = start.y + (target.y - start.y) * e;
+    panzoomInst.zoomAbs(0, 0, s);
+    panzoomInst.moveTo(x, y);
+    if (p < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+function fitToView(animated = false) {
+  const v = getViewport();
+  if (v.w < 10 || v.h < 10) return;   // viewport not ready yet
+  const target = computeFitTransform();
+  if (!isFinite(target.scale) || target.scale <= 0) return;
+  if (animated) smoothMoveTo(target, 500);
+  else {
+    panzoomInst.zoomAbs(0, 0, target.scale);
+    panzoomInst.moveTo(target.x, target.y);
+  }
+}
+
+function flyToZone(zoneId) {
+  const z = ZONES.find(x => x.id === zoneId);
+  if (!z) return;
+  smoothMoveTo(computeZoneTransform(z), 600);
+}
+
+function flyToCanvasPoint(fx, fy) {
+  const c = getCanvasSize();
+  const cur = panzoomInst.getTransform();
+  const target = computeCenterTransform(fx * c.w, fy * c.h, cur.scale);
+  smoothMoveTo(target, 400);
 }
 
 /* ═════ Controls ═════ */
@@ -744,6 +1216,16 @@ function setLang(l) {
   applyI18N();
   renderLegend();
   if (activeNodeId) openNode(activeNodeId);
+}
+
+/* ═════ Info modal ═════ */
+function openInfo() {
+  document.body.classList.add('info-open');
+  document.getElementById('info-modal').setAttribute('aria-hidden', 'false');
+}
+function closeInfo() {
+  document.body.classList.remove('info-open');
+  document.getElementById('info-modal').setAttribute('aria-hidden', 'true');
 }
 
 /* ═════ Node detail panel ═════ */
@@ -778,7 +1260,7 @@ function openNode(id) {
     if (!nn) return;
     const zz = nn.zone ? ZONES.find(x => x.id === nn.zone) : null;
     const a = document.createElement('a');
-    const zc = zz ? `var(--z${zz.id.slice(1)})` : 'var(--soil-30)';
+    const zc = zz ? `var(--${zz.id})` : 'var(--soil-30)';
     a.style.setProperty('--ncol', zc);
     a.textContent = stripTags((lang === 'en' ? nn.en : nn.fr).replace(/&amp;/g, '&'));
     if (NODES.find(x => x.id === m)) {
@@ -798,6 +1280,29 @@ function openNode(id) {
   document.body.classList.add('panel-open');
   document.getElementById('panel').classList.add('open');
   document.getElementById('panel').setAttribute('aria-hidden', 'false');
+
+  /* Pan so the node stays visible alongside the panel */
+  setTimeout(() => {
+    const nodeEl = document.querySelector('.node[data-id="' + id + '"]');
+    if (!nodeEl || !panzoomInst) return;
+    const v = getViewport();
+    const panel = document.getElementById('panel');
+    const panelW = panel.getBoundingClientRect().width;
+    const visibleCenterX = (v.w - panelW) / 2;
+    const visibleCenterY = v.h / 2;
+    const r = nodeEl.getBoundingClientRect();
+    // node center in viewport coords (relative to viewport top-left)
+    const vpRect = document.getElementById('viewport').getBoundingClientRect();
+    const nodeCx = r.left - vpRect.left + r.width / 2;
+    const nodeCy = r.top  - vpRect.top  + r.height / 2;
+    const dx = visibleCenterX - nodeCx;
+    const dy = visibleCenterY - nodeCy;
+    if (Math.abs(dx) > 40 || Math.abs(dy) > 40) {
+      const cur = panzoomInst.getTransform();
+      const target = { scale: cur.scale, x: cur.x + dx, y: cur.y + dy };
+      smoothMoveTo(target, 380);
+    }
+  }, 50);
 }
 
 function closePanel() {
@@ -809,11 +1314,77 @@ function closePanel() {
     el.classList.remove('highlight', 'dim'));
 }
 
+/* ═════ Keyboard navigation ═════ */
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closePanel();
+  if (e.key === 'Escape') {
+    if (document.body.classList.contains('info-open')) closeInfo();
+    else if (document.body.classList.contains('panel-open')) closePanel();
+    return;
+  }
+  if (!panzoomInst) return;
+  // Don't intercept when typing in inputs
+  if (e.target.matches('input, textarea, [contenteditable]')) return;
+  const STEP = 80;
+  if (e.key === 'ArrowLeft')  { panzoomInst.moveBy( STEP, 0, false); e.preventDefault(); }
+  if (e.key === 'ArrowRight') { panzoomInst.moveBy(-STEP, 0, false); e.preventDefault(); }
+  if (e.key === 'ArrowUp')    { panzoomInst.moveBy(0,  STEP, false); e.preventDefault(); }
+  if (e.key === 'ArrowDown')  { panzoomInst.moveBy(0, -STEP, false); e.preventDefault(); }
+  if (e.key === '+' || e.key === '=') {
+    const v = getViewport();
+    panzoomInst.smoothZoom(v.w / 2, v.h / 2, 1.25);
+  }
+  if (e.key === '-' || e.key === '_') {
+    const v = getViewport();
+    panzoomInst.smoothZoom(v.w / 2, v.h / 2, 0.8);
+  }
+  if (e.key === '0') { fitToView(true); }
+});
+
+/* ═════ Bootstrap ═════ */
+let userHasInteracted = false;
+
+function render() {
+  applyI18N();
+  renderZonesAndNodes();
+  renderLegend();
+  renderMinimap();
+  setupMinimapClick();
+}
+
+function bootPanzoom() {
+  initPanzoom();
+  // Mark user-interaction so we know when to stop auto-fitting on resize
+  ['panstart', 'zoom'].forEach(evt => {
+    panzoomInst.on(evt, () => { userHasInteracted = true; });
+  });
+
+  // Wait until the viewport has real dimensions before fitting
+  function tryFit() {
+    const v = getViewport();
+    if (v.w > 10 && v.h > 10) {
+      fitToView(false);
+      updateZoomClass();
+      updateMinimapViewport();
+      return true;
+    }
+    return false;
+  }
+  if (!tryFit()) {
+    const ro = new ResizeObserver(() => {
+      if (tryFit()) ro.disconnect();
+    });
+    ro.observe(document.getElementById('viewport'));
+  }
+}
+
+window.addEventListener('resize', () => {
+  if (!userHasInteracted) fitToView(false);
+  updateMinimapViewport();
 });
 
 render();
+if (document.readyState === 'complete') bootPanzoom();
+else window.addEventListener('load', bootPanzoom);
 </script>
 </body>
 </html>
