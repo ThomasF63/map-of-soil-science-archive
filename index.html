@@ -15,6 +15,27 @@
    A typographic plate of soil science you navigate like a real map.
    ═══════════════════════════════════════════════════════════════════════ */
 
+@keyframes zoneEnter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pillEnter {
+  from { opacity: 0; transform: translateY(4px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; } to { opacity: 1; }
+}
+.zone.will-enter {
+  opacity: 0;
+  animation: zoneEnter 320ms var(--ease-out) both;
+}
+.node.will-enter {
+  opacity: 0;
+  animation: pillEnter 220ms var(--ease-out) both;
+}
+.axis { animation: fadeIn 240ms var(--ease-out) 900ms both; }
+
 :root {
   --plate-w: 3520px;
   --plate-h: 2000px;
@@ -107,7 +128,8 @@ body { margin: 0; }
               color var(--duration-fast) var(--ease-out);
 }
 .topbar .lang-grp button:hover { background: var(--soil-05); }
-.topbar .lang-grp button.active { background: var(--soil); color: var(--root); }
+.topbar .lang-grp button:active { transform: scale(0.97); }
+.topbar .lang-grp button.active { background: var(--soil); color: var(--root); font-weight: 700; }
 
 .topbar .iconbtn {
   display: inline-flex; align-items: center; justify-content: center;
@@ -121,9 +143,11 @@ body { margin: 0; }
   cursor: pointer;
   transition: background var(--duration-fast) var(--ease-out),
               border-color var(--duration-fast) var(--ease-out),
-              color var(--duration-fast) var(--ease-out);
+              color var(--duration-fast) var(--ease-out),
+              transform var(--duration-fast) var(--ease-out);
 }
 .topbar .iconbtn:hover { background: var(--soil); color: var(--root); border-color: var(--soil); }
+.topbar .iconbtn:active { transform: scale(0.97); }
 .topbar .iconbtn.icon-only { width: 30px; padding: 0; }
 .topbar .iconbtn i { font-size: 14px; }
 
@@ -268,7 +292,9 @@ body { margin: 0; }
   color: var(--zc);
   background: var(--root);
   flex: none;
+  transition: transform var(--duration-fast) var(--ease-out);
 }
+.zone .medallion:hover { transform: scale(1.06); }
 .zone .zone-title {
   margin: 0;
   font-family: var(--font-sans);
@@ -385,8 +411,12 @@ body.lang-en .node .fr { display: none; }
 }
 .node:hover {
   background: var(--zc); border-color: var(--zc); color: var(--root);
-  transform: translateY(-1px);
+  transform: translateY(-2px) scale(1.02);
   box-shadow: 0 2px 10px rgba(59,50,44,.18);
+}
+.node:active {
+  transform: scale(0.98);
+  box-shadow: none;
 }
 .node.dim { opacity: 0.28; }
 .node.highlight {
@@ -416,7 +446,10 @@ body.zoom-near .zone .zone-figure { opacity: .85; }
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--soil-15);
   border-radius: 14px;
-  box-shadow: 0 6px 22px rgba(59,50,44,.10);
+  box-shadow:
+    0 1px 2px  rgba(59,50,44,.06),
+    0 4px 10px rgba(59,50,44,.08),
+    0 10px 28px rgba(59,50,44,.07);
   overflow: hidden;
   max-width: 320px;
   transition: max-height .3s ease, max-width .3s ease;
@@ -448,13 +481,14 @@ body.zoom-near .zone .zone-figure { opacity: .85; }
   padding: 6px 8px;
   border-radius: 8px;
   cursor: pointer;
-  transition: background var(--duration-fast) var(--ease-out);
+  transition: background var(--duration-fast) var(--ease-out),
+              transform  var(--duration-fast) var(--ease-out);
   background: none; border: 0;
   width: 100%;
   text-align: left;
   font-family: inherit;
 }
-.legend-chip .lg:hover { background: var(--soil-05); }
+.legend-chip .lg:hover { background: var(--soil-05); transform: translateX(3px); }
 .legend-chip .lg .num {
   font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em;
   color: var(--soil-60); min-width: 20px; flex: none;
@@ -477,7 +511,10 @@ body.zoom-near .zone .zone-figure { opacity: .85; }
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--soil-15);
   border-radius: 14px;
-  box-shadow: 0 6px 22px rgba(59,50,44,.10);
+  box-shadow:
+    0 1px 2px  rgba(59,50,44,.06),
+    0 4px 10px rgba(59,50,44,.08),
+    0 10px 28px rgba(59,50,44,.07);
   padding: 8px;
 }
 .minimap .mm-title {
@@ -495,7 +532,9 @@ body.zoom-near .zone .zone-figure { opacity: .85; }
   border-radius: 6px;
   border: 1px solid var(--soil-10);
   cursor: pointer;
+  transition: filter var(--duration-fast) var(--ease-out);
 }
+.minimap svg.mm-svg:hover { filter: brightness(1.05); }
 .minimap svg.mm-svg .mm-zone { transition: opacity .15s ease; }
 .minimap svg.mm-svg .mm-zone:hover { opacity: .75; }
 .minimap svg.mm-svg .mm-viewport {
@@ -694,27 +733,30 @@ body.panel-open .panel-scrim { opacity: 1; pointer-events: auto; }
 }
 .panel ul.subs { margin: 0; padding: 0; list-style: none; }
 .panel ul.subs li {
-  padding: 9px 0;
+  padding: 9px 0 9px 14px;
   border-bottom: 1px solid var(--soil-05);
   font-size: 14px; color: var(--soil); line-height: 1.45;
-  display: flex; gap: 10px; align-items: baseline;
+  position: relative;
 }
 .panel ul.subs li::before {
-  content: ""; width: 5px; height: 5px; border-radius: 9999px;
+  content: "";
+  position: absolute; left: 0; top: 6px; bottom: 6px;
+  width: 2px; border-radius: 2px;
   background: var(--zc, var(--soil-30));
-  margin-top: 7px; flex: none;
 }
 .panel .neighbors { display: flex; flex-wrap: wrap; gap: 6px; }
 .panel .neighbors a {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 6px 12px;
-  background: var(--root);
-  border: 1px solid var(--soil-10);
+  background: color-mix(in oklab, var(--ncol, var(--soil)) 6%, var(--root));
+  border: 1px solid color-mix(in oklab, var(--ncol, var(--soil)) 28%, transparent);
   border-radius: 9999px;
   color: var(--soil); text-decoration: none;
   font-size: 12.5px;
   cursor: pointer;
-  transition: all var(--duration-fast) var(--ease-out);
+  transition: background var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out),
+              transform var(--duration-fast) var(--ease-out);
   max-width: 100%;
 }
 .panel .neighbors a::before {
@@ -723,7 +765,8 @@ body.panel-open .panel-scrim { opacity: 1; pointer-events: auto; }
   flex: none;
 }
 .panel .neighbors a:hover {
-  background: var(--white); border-color: var(--ncol, var(--soil-30));
+  background: color-mix(in oklab, var(--ncol, var(--soil)) 12%, var(--root));
+  border-color: var(--ncol, var(--soil-30));
   transform: translateY(-1px);
 }
 .panel .neighbors a.ph-only { opacity: .55; cursor: default; }
@@ -949,7 +992,7 @@ ZONES.forEach((z, i) => z.num = String(i+1).padStart(2, '0'));
 const stage = document.getElementById('plate-stage');
 
 function renderZonesAndNodes() {
-  ZONES.forEach(z => {
+  ZONES.forEach((z, zoneIdx) => {
     const el = document.createElement('section');
     el.className = 'zone zone-color-' + z.id;
     el.dataset.id = z.id;
@@ -969,9 +1012,12 @@ function renderZonesAndNodes() {
       </header>
       <div class="nodes" data-zone="${z.id}"></div>
     `;
+    el.classList.add('will-enter');
+    el.style.animationDelay = (40 + zoneIdx * 80) + 'ms';
     stage.appendChild(el);
   });
 
+  const nodeCountPerZone = {};
   NODES.forEach(n => {
     const host = stage.querySelector(`.nodes[data-zone="${n.zone}"]`);
     if (!host) return;
@@ -980,6 +1026,12 @@ function renderZonesAndNodes() {
     el.dataset.id = n.id;
     el.innerHTML = `<span class="fr">${n.fr}</span><span class="en">${n.en}</span>`;
     el.addEventListener('click', () => openNode(n.id));
+    const zoneIdx = ZONES.findIndex(x => x.id === n.zone);
+    const zoneDelay = 40 + zoneIdx * 80;
+    nodeCountPerZone[n.zone] = (nodeCountPerZone[n.zone] || 0);
+    el.classList.add('will-enter');
+    el.style.animationDelay = (zoneDelay + 160 + nodeCountPerZone[n.zone] * 12) + 'ms';
+    nodeCountPerZone[n.zone]++;
     host.appendChild(el);
   });
 }
